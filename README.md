@@ -27,21 +27,24 @@ Entry-level SOC analyst based in **Doha, Qatar** — focused on alert triage, in
 |-------------|-----------------|
 | **Home SOC Lab (Sysmon + Wazuh + TheHive)** | Built a 3-VM SOC lab to simulate real detection + response workflow: Sysmon telemetry, SIEM alerting, and case management with structured investigation notes. |
 | **Vulnerability Management Program (Tenable / Qualys)** | Designed a full vuln management lifecycle: authenticated scanning, CVSS-based prioritization, remediation tracking, and verification — documented like an enterprise workflow. |
-| **Threat Investigation Case Files (HTML Reports)** | 3 professional SOC-style incident reports (HTML) with timelines, evidence, IOCs, and conclusions — will be published in this repo. |
+| **[Threat Investigation Case Files](https://github.com/YousefNabil-SOC/incident-reports)** | Professional SOC-style incident response reports investigating real-world attack scenarios with full timelines, evidence correlation, IOC extraction, and MITRE ATT&CK mapping. |
 | **Heart Disease Prediction (B.Sc. Graduation Project)** | ML project with preprocessing, Optuna tuning, and SHAP explainability — included as academic capstone. |
 
 ---
 
-## **Case Files**
+## **📊 Incident Response Case Files**
 
-Real investigation-style writeups (not “blog posts”).  
-(Links will be active after you add the HTML files into the repo.)
+Professional investigation reports demonstrating real-world SOC analysis skills.  
+**[🔗 View All Reports Portfolio](https://yousefnabil-soc.github.io/incident-reports/)**
 
-| **Investigation** | **Summary** |
-|-------------------|-------------|
-| **Case Report 01 (HTML)** | Incident timeline, evidence correlation, IOC extraction, and containment recommendations. |
-| **Case Report 02 (HTML)** | End-to-end investigation with clear triage rationale and findings. |
-| **Case Report 03 (HTML)** | Full case notes + indicators + remediation guidance. |
+| **Investigation** | **Severity** | **Summary** |
+|-------------------|--------------|-------------|
+| **[AZUKI-001 - Targeted Intrusion](https://yousefnabil-soc.github.io/incident-reports/AZUKI-001_IR-Report.html)** | 🔴 CRITICAL | RDP compromise with credential dumping (Mimikatz), lateral movement, data exfiltration, and anti-forensic log clearing. Full attack chain analysis with KQL hunting queries. |
+| **[AZUKI-ADMINPC - Admin PC Compromise](https://yousefnabil-soc.github.io/incident-reports/AZUKI-ADMINPC_IR-Report.html)** | 🔴 CRITICAL | Administrator workstation breach investigation covering privilege escalation, persistence mechanisms, C2 communications, and high-value target analysis. |
+| **[AZUKI-Q4-02 - Q4 2025 Security Incident](https://yousefnabil-soc.github.io/incident-reports/AZUKI-Q4-02_IR-Report.html)** | 🔴 CRITICAL | Sophisticated attack campaign with comprehensive timeline reconstruction, MITRE ATT&CK framework mapping, and detailed threat hunting methodology. |
+| **[BROKER-001 - Financial Services Breach](https://yousefnabil-soc.github.io/incident-reports/BROKER-001_IR-Report.html)** | 🟠 HIGH | Brokerage firm security incident focusing on network intrusion, financial data access patterns, and threat actor infrastructure analysis. |
+
+**📁 Repository:** [incident-reports](https://github.com/YousefNabil-SOC/incident-reports) | **🌐 Live Portfolio:** [yousefnabil-soc.github.io/incident-reports](https://yousefnabil-soc.github.io/incident-reports/)
 
 ---
 
