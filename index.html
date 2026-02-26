@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yousef Nabil — Cybersecurity Portfolio</title>
+    <meta name="description" content="Cybersecurity portfolio by Yousef Nabil — SOC analysis, vulnerability management, incident response, and detection engineering projects.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #151d2e;
+            --bg-code: #0d1117;
+            --border: #1e2d45;
+            --border-accent: #1a3a5c;
+            --border-hover: #2d4a6f;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #22d3ee;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #a78bfa;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: rgba(10, 14, 23, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+        .nav-brand {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+        }
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+        .nav-links .nav-ext {
+            color: var(--accent-cyan);
+            border: 1px solid rgba(34, 211, 238, 0.25);
+        }
+        .nav-links .nav-ext:hover {
+            background: rgba(34, 211, 238, 0.08);
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            padding: 9rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.06) 0%, rgba(59, 130, 246, 0.04) 40%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+        .hero-status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 5.5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        .hero h1 .name-text {
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+        }
+        .hero-bio {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 620px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.8;
+        }
+
+        /* Hero Links */
+        .hero-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .hero-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.55rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .hero-link:hover {
+            color: var(--text-primary);
+            border-color: var(--border-hover);
+            background: var(--bg-card);
+        }
+        .hero-link svg {
+            width: 16px; height: 16px;
+            fill: currentColor;
+        }
+
+        /* ============================================
+           SECTION STRUCTURE
+           ============================================ */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        .section {
+            padding: 4rem 0;
+            scroll-margin-top: 80px;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .section-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            margin-bottom: 0.5rem;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        /* ============================================
+           PROJECT CARDS
+           ============================================ */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+        .project-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 14px 14px 0 0;
+            background: var(--card-accent, var(--accent-blue));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .project-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+        .project-card:hover::before { opacity: 1; }
+
+        .project-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .project-type {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0.25rem 0.7rem;
+            border-radius: 4px;
+            background: var(--type-bg, rgba(59, 130, 246, 0.12));
+            color: var(--type-color, var(--accent-blue));
+        }
+        .project-status {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .project-status-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+        .project-desc {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+            flex-grow: 1;
+        }
+
+        .project-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1.5rem;
+        }
+        .tool-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: var(--bg-code);
+            border: 1px solid rgba(30, 45, 69, 0.6);
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .project-link:hover {
+            background: rgba(59, 130, 246, 0.18);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        .project-link svg {
+            width: 14px; height: 14px;
+            fill: currentColor;
+        }
+
+        /* ============================================
+           STATS BAR
+           ============================================ */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            padding: 2.5rem 0;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        .footer-tagline {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        .footer-sub {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .footer-links a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-size: 0.82rem;
+            transition: opacity 0.2s;
+        }
+        .footer-links a:hover { opacity: 0.8; }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .nav-links { gap: 0.2rem; }
+            .nav-links a { font-size: 0.72rem; padding: 0.35rem 0.5rem; }
+            .hero { padding: 7rem 1.5rem 3rem; }
+            .hero-bio { font-size: 0.95rem; }
+            .container { padding: 0 1.5rem; }
+            .section { padding: 3rem 0; }
+            .projects-grid { grid-template-columns: 1fr; }
+            .stats-bar { gap: 2rem; }
+            .stat-value { font-size: 1.4rem; }
+            .hero-links { gap: 0.6rem; }
+            .hero-link { padding: 0.5rem 0.9rem; font-size: 0.72rem; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-inner { padding: 0 1rem; }
+            .nav-brand { font-size: 0.78rem; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero-title { font-size: 0.78rem; }
+            .project-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================
+     NAVIGATION
+     ============================================ -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="#" class="nav-brand">YOUSEF NABIL</a>
+        <ul class="nav-links">
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="https://yousefnabil-soc.github.io/incident-reports/" class="nav-ext">IR Reports &rarr;</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ============================================
+     HERO
+     ============================================ -->
+<header class="hero">
+    <div class="hero-status">
+        <span class="hero-status-dot"></span>
+        Open to Opportunities
+    </div>
+    <h1><span class="name-text">Yousef Nabil</span></h1>
+    <p class="hero-title">Cybersecurity Student &nbsp;|&nbsp; SOC Analyst Trainee &nbsp;|&nbsp; DFIR Enthusiast</p>
+    <p class="hero-bio">
+        Building hands-on security operations experience through structured lab environments,
+        professional incident investigations, and enterprise-grade vulnerability management workflows.
+        Based in Doha, Qatar.
+    </p>
+    <div class="hero-links">
+        <a href="https://github.com/YousefNabil-SOC" class="hero-link">
+            <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            GitHub
+        </a>
+        <a href="https://www.linkedin.com/in/yousef-nabil-79a431287/" class="hero-link">
+            <svg viewBox="0 0 16 16"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 01.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/></svg>
+            LinkedIn
+        </a>
+        <a href="mailto:yousef.nabil.qa@gmail.com" class="hero-link">
+            <svg viewBox="0 0 16 16"><path d="M2 2A2 2 0 00.05 3.555L8 8.414l7.95-4.859A2 2 0 0014 2H2zm-2 9.8V4.698l5.803 3.546L0 11.801zm6.761-3.175l.338.207a.5.5 0 00.502 0l.338-.207L16 11.801V12a2 2 0 01-2 2H2a2 2 0 01-2-2v-.199l6.761-3.176z"/></svg>
+            Email
+        </a>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- ============================================
+         STATS BAR
+         ============================================ -->
+    <div class="stats-bar">
+        <div class="stat">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Lab Projects</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">4</div>
+            <div class="stat-label">IR Case Files</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">10+</div>
+            <div class="stat-label">Tools Used</div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ============================================
+         PROJECTS SECTION
+         ============================================ -->
+    <section class="section" id="projects">
+        <div class="section-header">
+            <div class="section-label">Portfolio</div>
+            <div class="section-title">Cybersecurity Projects</div>
+        </div>
+
+        <div class="projects-grid">
+
+            <!-- ==========================================
+                 PROJECT CARD — SOC Home Lab
+                 ========================================== -->
+            <div class="project-card" style="--card-accent: var(--accent-cyan);">
+                <div class="project-card-header">
+                    <span class="project-type" style="--type-bg: rgba(34, 211, 238, 0.1); --type-color: var(--accent-cyan);">Detection &amp; Response</span>
+                    <span class="project-status"><span class="project-status-dot"></span> Live</span>
+                </div>
+                <h3 class="project-title">SOC Home Lab: Detection &amp; Response Pipeline</h3>
+                <p class="project-desc">
+                    End-to-end SOC environment — Windows 11 endpoint telemetry ingested by Wazuh SIEM,
+                    with alert triage and case management via TheHive. Dual-NIC architecture, end-to-end
+                    validation, and MITRE ATT&amp;CK detection mapping.
+                </p>
+                <div class="project-tools">
+                    <span class="tool-tag">Wazuh 4.7</span>
+                    <span class="tool-tag">TheHive 5.x</span>
+                    <span class="tool-tag">Sysmon</span>
+                    <span class="tool-tag">VirtualBox</span>
+                    <span class="tool-tag">Docker</span>
+                </div>
+                <a href="soc-home-lab.html" class="project-link">
+                    View Project
+                    <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 8a.5.5 0 01.5-.5h5.793L8.146 5.354a.5.5 0 11.708-.708l3 3a.5.5 0 010 .708l-3 3a.5.5 0 01-.708-.708L10.293 8.5H4.5A.5.5 0 014 8z"/></svg>
+                </a>
+            </div>
+
+            <!-- ==========================================
+                 PROJECT CARD — Vulnerability Management
+                 ========================================== -->
+            <div class="project-card" style="--card-accent: var(--accent-purple);">
+                <div class="project-card-header">
+                    <span class="project-type" style="--type-bg: rgba(167, 139, 250, 0.1); --type-color: var(--accent-purple);">Vulnerability Management</span>
+                    <span class="project-status"><span class="project-status-dot"></span> Live</span>
+                </div>
+                <h3 class="project-title">Vulnerability Management Program: Inception to Maintenance</h3>
+                <p class="project-desc">
+                    Complete vulnerability management lifecycle — authenticated scanning with Tenable,
+                    risk-prioritized remediation across 4 rounds, a scripted remediation library,
+                    independent verification by rescan, and transition to maintenance KPIs.
+                </p>
+                <div class="project-tools">
+                    <span class="tool-tag">Tenable VM</span>
+                    <span class="tool-tag">Nessus</span>
+                    <span class="tool-tag">Azure</span>
+                    <span class="tool-tag">PowerShell</span>
+                    <span class="tool-tag">Bash</span>
+                </div>
+                <a href="vuln-management.html" class="project-link">
+                    View Project
+                    <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 8a.5.5 0 01.5-.5h5.793L8.146 5.354a.5.5 0 11.708-.708l3 3a.5.5 0 010 .708l-3 3a.5.5 0 01-.708-.708L10.293 8.5H4.5A.5.5 0 014 8z"/></svg>
+                </a>
+            </div>
+
+            <!-- ==========================================
+                 PROJECT CARD — Incident Response Reports
+                 ========================================== -->
+            <div class="project-card" style="--card-accent: var(--accent-red);">
+                <div class="project-card-header">
+                    <span class="project-type" style="--type-bg: rgba(239, 68, 68, 0.1); --type-color: var(--accent-red);">Incident Response</span>
+                    <span class="project-status"><span class="project-status-dot"></span> Live</span>
+                </div>
+                <h3 class="project-title">Threat Investigation Case Files</h3>
+                <p class="project-desc">
+                    Professional SOC-style incident response reports investigating real-world attack scenarios.
+                    Full timelines, evidence correlation, KQL hunting queries, IOC extraction, and
+                    comprehensive MITRE ATT&amp;CK mapping across 4 critical investigations.
+                </p>
+                <div class="project-tools">
+                    <span class="tool-tag">Sentinel</span>
+                    <span class="tool-tag">KQL</span>
+                    <span class="tool-tag">MITRE ATT&amp;CK</span>
+                    <span class="tool-tag">Defender</span>
+                    <span class="tool-tag">IOC Analysis</span>
+                </div>
+                <a href="https://yousefnabil-soc.github.io/incident-reports/" class="project-link">
+                    View Project
+                    <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 8a.5.5 0 01.5-.5h5.793L8.146 5.354a.5.5 0 11.708-.708l3 3a.5.5 0 010 .708l-3 3a.5.5 0 01-.708-.708L10.293 8.5H4.5A.5.5 0 014 8z"/></svg>
+                </a>
+            </div>
+
+            <!-- ==========================================
+                 TEMPLATE — Copy this block to add a new project
+                 
+                 Steps to add a new project:
+                 1. Copy this entire <div class="project-card"> block
+                 2. Uncomment it
+                 3. Change --card-accent color (options: --accent-cyan, --accent-purple, --accent-red, --accent-green, --accent-amber, --accent-blue)
+                 4. Change --type-bg and --type-color to match
+                 5. Update: project type label, title, description, tool tags, and link href
+                 6. Upload your new project HTML file to this same repo
+                 7. Update the stat counter at the top if needed
+                 
+            <div class="project-card" style="- -card-accent: var(- -accent-green);">
+                <div class="project-card-header">
+                    <span class="project-type" style="- -type-bg: rgba(16, 185, 129, 0.1); - -type-color: var(- -accent-green);">Category</span>
+                    <span class="project-status"><span class="project-status-dot"></span> Live</span>
+                </div>
+                <h3 class="project-title">Project Title</h3>
+                <p class="project-desc">
+                    Project description goes here. Keep it to 2-3 sentences
+                    that explain what the project does and why it matters.
+                </p>
+                <div class="project-tools">
+                    <span class="tool-tag">Tool 1</span>
+                    <span class="tool-tag">Tool 2</span>
+                    <span class="tool-tag">Tool 3</span>
+                </div>
+                <a href="your-project-file.html" class="project-link">
+                    View Project
+                    <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 8a.5.5 0 01.5-.5h5.793L8.146 5.354a.5.5 0 11.708-.708l3 3a.5.5 0 010 .708l-3 3a.5.5 0 01-.708-.708L10.293 8.5H4.5A.5.5 0 014 8z"/></svg>
+                </a>
+            </div>
+                 ========================================== -->
+
+        </div>
+    </section>
+
+</div>
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<footer class="footer">
+    <p class="footer-tagline">Detect. Investigate. Improve.</p>
+    <p class="footer-sub">Building real SOC skill through hands-on labs and professional reporting.</p>
+    <div class="footer-links">
+        <a href="https://github.com/YousefNabil-SOC">GitHub</a>
+        <a href="https://www.linkedin.com/in/yousef-nabil-79a431287/">LinkedIn</a>
+        <a href="mailto:yousef.nabil.qa@gmail.com">Email</a>
+    </div>
+</footer>
+
+</body>
+</html>
