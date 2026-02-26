@@ -4,6 +4,7 @@
 <a href="https://github.com/YousefNabil-SOC/YousefNabil-SOC/blob/main/Yousef_Nabil_CV.pdf" target="_blank"><img src="https://img.shields.io/badge/-Resume-333333?&style=for-the-badge&logo=readme&logoColor=white" /></a>
 <a href="https://www.linkedin.com/in/yousef-nabil-79a431287/" target="_blank"><img src="https://img.shields.io/badge/-LinkedIn-0072b1?&style=for-the-badge&logo=linkedin&logoColor=white" /></a>
 <a href="https://github.com/YousefNabil-SOC" target="_blank"><img src="https://img.shields.io/badge/-GitHub-181717?&style=for-the-badge&logo=github&logoColor=white" /></a>
+<a href="https://yousefnabil-soc.github.io/YousefNabil-SOC/" target="_blank"><img src="https://img.shields.io/badge/-Portfolio-22d3ee?&style=for-the-badge&logo=googlechrome&logoColor=white" /></a>
 
 ## **About Me**
 
@@ -15,7 +16,7 @@ Entry-level SOC analyst based in **Doha, Qatar** — focused on alert triage, in
 
 | **Role** | **Organization** |
 |----------|------------------|
-| Virtual SOC Analyst (Training) | Let’s Defend |
+| Virtual SOC Analyst (Training) | Let's Defend |
 | SOC & SIEM Labs (Hands-On) | Hack The Box Academy |
 | B.Sc. Computer Science (IT) — Graduation 2025 | Egyptian E-Learning University (EELU) |
 
@@ -23,11 +24,13 @@ Entry-level SOC analyst based in **Doha, Qatar** — focused on alert triage, in
 
 ## **Projects**
 
+**🌐 [View Full Portfolio](https://yousefnabil-soc.github.io/YousefNabil-SOC/)**
+
 | **Project** | **Description** |
 |-------------|-----------------|
-| **Home SOC Lab (Sysmon + Wazuh + TheHive)** | Built a 3-VM SOC lab to simulate real detection + response workflow: Sysmon telemetry, SIEM alerting, and case management with structured investigation notes. |
-| **Vulnerability Management Program (Tenable / Qualys)** | Designed a full vuln management lifecycle: authenticated scanning, CVSS-based prioritization, remediation tracking, and verification — documented like an enterprise workflow. |
-| **[Threat Investigation Case Files](https://github.com/YousefNabil-SOC/incident-reports)** | Professional SOC-style incident response reports investigating real-world attack scenarios with full timelines, evidence correlation, IOC extraction, and MITRE ATT&CK mapping. |
+| **[SOC Home Lab — Detection & Response Pipeline](https://yousefnabil-soc.github.io/YousefNabil-SOC/soc-home-lab.html)** | 3-VM detection & response pipeline: Sysmon telemetry → Wazuh SIEM → TheHive case management. Dual-NIC architecture, end-to-end validation, and MITRE ATT&CK mapping. |
+| **[Vulnerability Management Program — Inception to Maintenance](https://yousefnabil-soc.github.io/YousefNabil-SOC/vuln-management.html)** | Full lifecycle program: authenticated scanning (Tenable), risk-prioritized remediation with scripted fixes, independent verification by rescan, and maintenance KPIs. |
+| **[Threat Investigation Case Files](https://yousefnabil-soc.github.io/incident-reports/)** | Professional SOC-style incident response reports investigating real-world attack scenarios with full timelines, evidence correlation, IOC extraction, and MITRE ATT&CK mapping. |
 | **Heart Disease Prediction (B.Sc. Graduation Project)** | ML project with preprocessing, Optuna tuning, and SHAP explainability — included as academic capstone. |
 
 ---
@@ -70,7 +73,7 @@ Professional investigation reports demonstrating real-world SOC analysis skills.
 | **Course / Platform** | **Focus** |
 |-----------------------|----------|
 | Hack The Box Academy — SOC & SIEM Labs | SIEM investigations, detection workflow, blue-team lab exercises |
-| Let’s Defend — Virtual SOC | Alert triage, investigation notes, escalation rationale, incident handling |
+| Let's Defend — Virtual SOC | Alert triage, investigation notes, escalation rationale, incident handling |
 | TryHackMe — SAL1 | SOC simulation: phishing, traffic analysis, Windows/Linux monitoring, triage |
 | KC7 Cyber Labs | KQL-based investigations (lateral movement, phishing, memory-focused cases) |
 | Google Cybersecurity Professional Certificate | SOC fundamentals (Linux, SQL, monitoring, IR basics) |
