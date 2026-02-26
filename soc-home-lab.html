@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOC Home Lab — Yousef Nabil</title>
+    <meta name="description" content="SOC Home Lab: Windows 11 + Wazuh SIEM + TheHive case management. Detection & response pipeline built from scratch on VirtualBox.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #151d2e;
+            --bg-code: #0d1117;
+            --border: #1e2d45;
+            --border-accent: #1a3a5c;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #22d3ee;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #a78bfa;
+            --glow-blue: rgba(59, 130, 246, 0.15);
+            --glow-cyan: rgba(34, 211, 238, 0.1);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* === NAVIGATION === */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(10, 14, 23, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+        }
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+        .nav-brand {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 0.25rem;
+            list-style: none;
+            overflow-x: auto;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.78rem;
+            padding: 0.4rem 0.7rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .nav-links a:hover { color: var(--text-primary); background: var(--bg-card); }
+
+        /* === HERO === */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse 60% 50% at 50% 0%, var(--glow-blue), transparent);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--accent-cyan);
+            background: rgba(34, 211, 238, 0.08);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-sub {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        .hero-meta-item .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot-green { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+        .dot-blue { background: var(--accent-blue); box-shadow: 0 0 8px var(--accent-blue); }
+        .dot-amber { background: var(--accent-amber); box-shadow: 0 0 8px var(--accent-amber); }
+
+        /* === MAIN CONTENT === */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        /* === SECTION === */
+        .section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 80px;
+        }
+        .section-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: var(--text-primary);
+        }
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* === CARDS === */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.3s;
+        }
+        .card:hover { border-color: var(--border-accent); }
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+        }
+        .card p, .card li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.75;
+        }
+
+        /* === ARCHITECTURE DIAGRAM === */
+        .arch-diagram {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            font-family: 'IBM Plex Mono', monospace;
+            overflow-x: auto;
+        }
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+        .arch-node {
+            background: var(--bg-card);
+            border: 1px solid var(--border-accent);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            text-align: center;
+            min-width: 180px;
+            position: relative;
+        }
+        .arch-node-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-cyan);
+            margin-bottom: 0.4rem;
+        }
+        .arch-node-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+        }
+        .arch-node-detail {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .arch-arrow {
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* === CODE BLOCKS === */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 1rem;
+            background: rgba(30, 45, 69, 0.4);
+            border-bottom: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+        .code-dots {
+            display: flex;
+            gap: 6px;
+        }
+        .code-dots span {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+        .code-dots span:first-child { background: #ef4444; }
+        .code-dots span:nth-child(2) { background: #f59e0b; }
+        .code-dots span:last-child { background: #10b981; }
+        .code-body {
+            padding: 1rem 1.2rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            overflow-x: auto;
+            white-space: pre;
+        }
+        .code-body .cmd { color: var(--accent-cyan); }
+        .code-body .comment { color: var(--text-muted); font-style: italic; }
+        .code-body .output { color: var(--accent-green); }
+        .code-body .flag { color: var(--accent-amber); }
+        .code-body .path { color: var(--accent-purple); }
+
+        /* === TABLE === */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.88rem;
+        }
+        .data-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: var(--bg-code);
+            color: var(--accent-cyan);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+        }
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(30, 45, 69, 0.5);
+            color: var(--text-secondary);
+        }
+        .data-table tr:hover td { background: rgba(30, 45, 69, 0.3); }
+
+        /* === TAG / BADGE === */
+        .tag {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 500;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+        .tag-blue { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .tag-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .tag-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+        .tag-red { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .tag-purple { background: rgba(167, 139, 250, 0.15); color: var(--accent-purple); }
+        .tag-cyan { background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); }
+
+        /* === GRID === */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+
+        /* === MITRE TABLE === */
+        .mitre-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(30, 45, 69, 0.5);
+        }
+        .mitre-id {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--accent-amber);
+            min-width: 80px;
+            font-weight: 600;
+        }
+        .mitre-tactic {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 140px;
+        }
+        .mitre-desc {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            flex: 1;
+        }
+
+        /* === SUCCESS CRITERIA === */
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+        }
+        .check-icon {
+            color: var(--accent-green);
+            font-size: 1rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .check-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* === STEP INDICATOR === */
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: var(--glow-blue);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        /* === CALLOUT === */
+        .callout {
+            border-left: 3px solid var(--accent-amber);
+            background: rgba(245, 158, 11, 0.05);
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+        .callout p { color: var(--text-secondary); font-size: 0.88rem; }
+        .callout-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-amber);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+        .callout-blue {
+            border-left-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .callout-blue .callout-label { color: var(--accent-blue); }
+
+        /* === FOOTER === */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        .footer-text {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+        .footer a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+        .footer a:hover { text-decoration: underline; }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 0.8rem;
+        }
+
+        /* === DIVIDER === */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 3rem 0;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 6rem 1.5rem 3rem; }
+            .container { padding: 0 1.5rem 3rem; }
+            .hero-meta { gap: 1rem; }
+            .arch-flow { flex-direction: column; }
+            .arch-arrow { transform: rotate(90deg); }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .mitre-row { flex-direction: column; gap: 0.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="https://github.com/YousefNabil-SOC" class="nav-brand">YOUSEF NABIL / SOC</a>
+        <ul class="nav-links">
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#environment">Environment</a></li>
+            <li><a href="#wazuh">Wazuh SIEM</a></li>
+            <li><a href="#thehive">TheHive</a></li>
+            <li><a href="#endpoint">Endpoint</a></li>
+            <li><a href="#detection">Detection</a></li>
+            <li><a href="#mitre">MITRE</a></li>
+            <li><a href="#lessons">Lessons</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="hero-badge">&#9632; SOC Home Lab Project</div>
+    <h1>SOC Home Lab: Detection &amp; Response Pipeline</h1>
+    <p class="hero-sub">
+        End-to-end security operations environment — Windows 11 endpoint telemetry ingested by Wazuh SIEM,
+        with alert triage and case management via TheHive. Built from scratch on VirtualBox to simulate
+        a realistic SOC detection and response workflow.
+    </p>
+    <div class="hero-meta">
+        <span class="hero-meta-item"><span class="dot dot-green"></span> Wazuh 4.7 SIEM</span>
+        <span class="hero-meta-item"><span class="dot dot-blue"></span> TheHive 5.x</span>
+        <span class="hero-meta-item"><span class="dot dot-amber"></span> Sysmon + Windows Events</span>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- EXECUTIVE SUMMARY -->
+    <section class="section" id="overview">
+        <div class="section-label">Executive Summary</div>
+        <div class="section-title">What This Project Demonstrates</div>
+        <div class="section-desc">
+            This project builds a functional SOC pipeline on a single laptop using three coordinated virtual machines.
+            Rather than following a tutorial checklist, the goal was to understand how each component in a detection
+            and response chain depends on the others — from endpoint telemetry generation through centralized log
+            ingestion, alert correlation, and structured case management.
+        </div>
+        <div class="section-desc">
+            The lab was designed to answer a real operational question: <em>if an event fires on a Windows endpoint,
+            can I trace it from raw log through SIEM alert to an actionable case with investigation notes?</em>
+            Every configuration choice — dual-NIC networking, static host-only IPs, Sysmon as the telemetry source,
+            archives.json as the proof layer — serves that objective.
+        </div>
+
+        <div class="grid-3" style="margin-top: 1.5rem;">
+            <div class="card">
+                <div class="card-title">&#128270; Telemetry Generation</div>
+                <p>Sysmon captures process creation, network connections, file changes, and registry modifications on a Windows 11 endpoint. Windows Event Logs provide a complementary audit trail.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">&#128202; Centralized Ingestion</div>
+                <p>Wazuh Manager receives agent data over ports 1514/1515, normalizes events in the Indexer, and surfaces them through the Dashboard for search and correlation.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">&#128196; Case Management</div>
+                <p>TheHive receives alerts via its REST API, enabling promotion to cases with structured investigation notes — mirroring production SOC triage workflows.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ARCHITECTURE -->
+    <section class="section" id="architecture">
+        <div class="section-label">Lab Architecture</div>
+        <div class="section-title">Network Design &amp; Data Flow</div>
+        <div class="section-desc">
+            All three VMs use a dual-NIC configuration: Adapter 1 (Bridged) provides internet access via DHCP,
+            while Adapter 2 (Host-only) creates a stable private lab network with static IPs. This separation
+            ensures the detection pipeline remains functional regardless of host network changes — a design
+            principle borrowed from production segmented environments.
+        </div>
+
+        <div class="arch-diagram">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <span class="tag tag-cyan">HOST-ONLY NETWORK — 192.168.56.0/24</span>
+            </div>
+            <div class="arch-flow">
+                <div class="arch-node">
+                    <div class="arch-node-label">Endpoint</div>
+                    <div class="arch-node-name">Windows 11</div>
+                    <div class="arch-node-detail">192.168.56.103</div>
+                    <div class="arch-node-detail" style="margin-top: 0.3rem;">Sysmon + Wazuh Agent</div>
+                </div>
+                <div class="arch-arrow">&#8594;</div>
+                <div class="arch-node" style="border-color: var(--accent-blue);">
+                    <div class="arch-node-label">SIEM</div>
+                    <div class="arch-node-name">Wazuh</div>
+                    <div class="arch-node-detail">192.168.56.102</div>
+                    <div class="arch-node-detail" style="margin-top: 0.3rem;">Manager + Indexer + Dashboard</div>
+                </div>
+                <div class="arch-arrow">&#8594;</div>
+                <div class="arch-node" style="border-color: var(--accent-amber);">
+                    <div class="arch-node-label">Case Mgmt</div>
+                    <div class="arch-node-name">TheHive</div>
+                    <div class="arch-node-detail">192.168.56.101</div>
+                    <div class="arch-node-detail" style="margin-top: 0.3rem;">Docker Compose (StrangeBee)</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.78rem; color: var(--text-muted);">
+                Agent &#8594; 1514/1515 &#8594; Wazuh &nbsp;&nbsp;|&nbsp;&nbsp; Wazuh &#8594; API (9000) &#8594; TheHive
+            </div>
+        </div>
+
+        <div class="section-desc" style="margin-top: 1.5rem;">
+            <strong>Why this topology matters:</strong> Bridged networking alone would break inter-VM communication
+            whenever the host switches Wi-Fi networks. The host-only adapter guarantees that the detection pipeline
+            — agent enrollment, log forwarding, API calls to TheHive — remains stable across reboots and location changes.
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>VM</th>
+                    <th>Host-Only IP</th>
+                    <th>Services / Ports</th>
+                    <th>Resources</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="tag tag-amber">Windows 11</span></td>
+                    <td style="font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem;">192.168.56.103</td>
+                    <td>Sysmon64, Wazuh Agent</td>
+                    <td>6-8 GB RAM, 2-4 vCPU, 60-80 GB</td>
+                </tr>
+                <tr>
+                    <td><span class="tag tag-blue">Wazuh</span></td>
+                    <td style="font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem;">192.168.56.102</td>
+                    <td>1514, 1515, 443 (Dashboard)</td>
+                    <td>12-14 GB RAM, 4-6 vCPU, 80 GB</td>
+                </tr>
+                <tr>
+                    <td><span class="tag tag-green">TheHive</span></td>
+                    <td style="font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem;">192.168.56.101</td>
+                    <td>9000 (UI/API), Cassandra, Elasticsearch</td>
+                    <td>12-14 GB RAM, 4-6 vCPU, 80 GB</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ENVIRONMENT SETUP -->
+    <section class="section" id="environment">
+        <div class="section-label">Environment Setup</div>
+        <div class="section-title">Platform Preparation &amp; Networking</div>
+
+        <div class="card">
+            <div class="card-title"><span class="step-num">1</span>Hypervisor &amp; Host-Only Network</div>
+            <p>VirtualBox with the Extension Pack (version-matched) serves as the hypervisor. A dedicated
+               host-only network (<code>vboxnet0</code>) with DHCP disabled provides the stable lab backbone.</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>VirtualBox &gt; Tools &gt; Network</span>
+                </div>
+                <div class="code-body"><span class="comment"># Host-only network configuration</span>
+IPv4 Address:  <span class="output">192.168.56.1</span>
+IPv4 Netmask:  <span class="output">255.255.255.0</span>
+DHCP Server:   <span class="flag">Disabled</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="step-num">2</span>VM Networking — Dual Adapter Configuration</div>
+            <p>Every VM gets two adapters. This is the single most important configuration to get right — it determines
+               whether the lab can survive a host network change.</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>All VMs — Adapter Settings</span>
+                </div>
+                <div class="code-body"><span class="comment"># Adapter 1 — Internet access</span>
+Attached to:  <span class="cmd">Bridged Adapter</span>
+Promiscuous:  Allow All
+Cable:        <span class="output">Connected</span>
+
+<span class="comment"># Adapter 2 — Stable lab network</span>
+Attached to:  <span class="cmd">Host-only Adapter (vboxnet0)</span>
+Cable:        <span class="output">Connected</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="step-num">3</span>Static IP Assignment (Netplan)</div>
+            <p>Ubuntu VMs use Netplan for interface configuration. The bridged adapter stays on DHCP; the host-only
+               adapter gets a static address that every other component references.</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Wazuh VM — /etc/netplan/50-cloud-init.yaml</span>
+                </div>
+                <div class="code-body"><span class="cmd">network</span>:
+  <span class="flag">version</span>: 2
+  <span class="flag">ethernets</span>:
+    <span class="path">enp0s3</span>:
+      dhcp4: true
+    <span class="path">enp0s8</span>:
+      addresses: [<span class="output">192.168.56.102/24</span>]
+      optional: true</div>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Apply &amp; Verify</span>
+                </div>
+                <div class="code-body"><span class="cmd">sudo netplan try</span>
+<span class="cmd">sudo netplan apply</span>
+<span class="cmd">ip -br a</span>     <span class="comment"># Confirm both interfaces are UP with correct IPs</span></div>
+            </div>
+            <div class="callout">
+                <div class="callout-label">Netplan Gotcha</div>
+                <p>Netplan is indentation-sensitive and requires spaces — not tabs. A single tab character
+                   will cause <code>netplan apply</code> to fail silently or produce malformed configuration.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="step-num">4</span>Connectivity Validation</div>
+            <p>Before installing any services, verify full mesh connectivity across the host-only network.
+               This eliminates networking as a variable for all subsequent troubleshooting.</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>From any Ubuntu VM</span>
+                </div>
+                <div class="code-body"><span class="cmd">ping</span> <span class="flag">-c 2</span> <span class="output">192.168.56.101</span>   <span class="comment"># TheHive</span>
+<span class="cmd">ping</span> <span class="flag">-c 2</span> <span class="output">192.168.56.102</span>   <span class="comment"># Wazuh</span>
+<span class="cmd">ping</span> <span class="flag">-c 2</span> <span class="output">192.168.56.103</span>   <span class="comment"># Windows</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- WAZUH SIEM -->
+    <section class="section" id="wazuh">
+        <div class="section-label">SIEM Deployment</div>
+        <div class="section-title">Wazuh — Manager, Indexer &amp; Dashboard</div>
+        <div class="section-desc">
+            Wazuh serves as the central nervous system of this lab. A single-node deployment bundles the
+            Manager (receives and decodes agent events), the Indexer (stores and indexes for search), and
+            the Dashboard (provides visual investigation interface). In production, these would be distributed
+            across separate nodes — understanding the monolithic deployment first clarifies each component's role.
+        </div>
+
+        <div class="card">
+            <div class="card-title">Installation</div>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Wazuh VM (Ubuntu Server)</span>
+                </div>
+                <div class="code-body"><span class="cmd">sudo apt update</span>
+<span class="cmd">sudo apt</span> <span class="flag">-y</span> install curl unzip apt-transport-https lsb-release gnupg
+
+<span class="comment"># Download and run the all-in-one installer</span>
+<span class="cmd">curl</span> <span class="flag">-sO</span> https://packages.wazuh.com/4.7/wazuh-install.sh
+<span class="cmd">sudo bash</span> ./wazuh-install.sh <span class="flag">-a</span>
+
+<span class="comment"># Ubuntu 24.04: Add --ignore-check if OS compatibility warning appears</span>
+<span class="cmd">sudo bash</span> ./wazuh-install.sh <span class="flag">-a --ignore-check</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Service Validation</div>
+            <p>Every service must show <code>active</code>, and the agent enrollment ports must be listening.
+               This is not optional — skipping validation here creates phantom issues later.</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Post-Install Checks</span>
+                </div>
+                <div class="code-body"><span class="cmd">sudo systemctl is-active</span> wazuh-manager    <span class="comment"># → active</span>
+<span class="cmd">sudo systemctl is-active</span> wazuh-indexer     <span class="comment"># → active</span>
+<span class="cmd">sudo systemctl is-active</span> wazuh-dashboard   <span class="comment"># → active</span>
+
+<span class="comment"># Verify agent enrollment and data ports are listening</span>
+<span class="cmd">sudo ss -tulpen</span> | <span class="cmd">egrep</span> <span class="flag">':1514|:1515'</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Dashboard Access</div>
+            <p>Retrieve the auto-generated admin credentials and confirm Dashboard is reachable over HTTPS.</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Retrieve Credentials</span>
+                </div>
+                <div class="code-body"><span class="cmd">sudo tar</span> <span class="flag">-O -xvf</span> wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
+
+<span class="comment"># Access Dashboard</span>
+<span class="output">https://192.168.56.102</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- THEHIVE -->
+    <section class="section" id="thehive">
+        <div class="section-label">Case Management</div>
+        <div class="section-title">TheHive 5.x — Docker Compose Deployment</div>
+        <div class="section-desc">
+            TheHive provides the investigation layer. In a production SOC, analysts receive SIEM alerts and promote
+            them to structured cases with evidence, investigation notes, and response actions. This lab uses
+            TheHive's Docker Compose stack (StrangeBee) to mirror that workflow — Cassandra handles storage,
+            Elasticsearch powers search, and the TheHive application manages cases through its REST API.
+        </div>
+
+        <div class="card">
+            <div class="card-title">Docker Engine Installation</div>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>TheHive VM — Docker Setup</span>
+                </div>
+                <div class="code-body"><span class="cmd">sudo apt update</span> && <span class="cmd">sudo apt</span> <span class="flag">-y</span> upgrade
+<span class="cmd">sudo apt install</span> <span class="flag">-y</span> ca-certificates curl gnupg git jq
+
+<span class="comment"># Add Docker GPG key and repository</span>
+<span class="cmd">sudo install</span> <span class="flag">-m 0755 -d</span> /etc/apt/keyrings
+<span class="cmd">curl</span> <span class="flag">-fsSL</span> https://download.docker.com/linux/ubuntu/gpg | \
+  <span class="cmd">sudo gpg</span> <span class="flag">--dearmor</span> <span class="flag">-o</span> /etc/apt/keyrings/docker.gpg
+<span class="cmd">sudo chmod</span> a+r /etc/apt/keyrings/docker.gpg
+
+<span class="comment"># Install Docker Engine + Compose plugin</span>
+<span class="cmd">sudo apt update</span>
+<span class="cmd">sudo apt install</span> <span class="flag">-y</span> docker-ce docker-ce-cli containerd.io \
+  docker-buildx-plugin docker-compose-plugin
+<span class="cmd">sudo systemctl enable</span> <span class="flag">--now</span> docker
+<span class="cmd">sudo usermod</span> <span class="flag">-aG</span> docker <span class="path">$USER</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">TheHive Stack Deployment</div>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Deploy StrangeBee Docker Stack</span>
+                </div>
+                <div class="code-body"><span class="cmd">mkdir</span> <span class="flag">-p</span> ~/docker && <span class="cmd">cd</span> ~/docker
+<span class="cmd">git clone</span> https://github.com/StrangeBeeCorp/docker.git
+<span class="cmd">cd</span> docker/prod1-thehive
+
+<span class="cmd">docker compose pull</span>
+<span class="cmd">docker compose up</span> <span class="flag">-d</span>
+<span class="cmd">docker compose ps</span>       <span class="comment"># All containers should show "Up"</span></div>
+            </div>
+            <div class="callout">
+                <div class="callout-label">First Startup</div>
+                <p>Cassandra and Elasticsearch initialization can take 2-5 minutes on first boot. If TheHive shows
+                   unhealthy, check <code>docker logs cassandra</code> before assuming misconfiguration.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ENDPOINT CONFIGURATION -->
+    <section class="section" id="endpoint">
+        <div class="section-label">Endpoint Configuration</div>
+        <div class="section-title">Windows 11 — Sysmon &amp; Wazuh Agent</div>
+        <div class="section-desc">
+            The Windows 11 VM is the telemetry source. Sysmon generates high-fidelity process, network, and
+            file system events that go beyond standard Windows Event Logs. The Wazuh Agent forwards both
+            Sysmon and native event channels to the Manager for centralized analysis.
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Sysmon Installation</div>
+                <p>Sysmon extends Windows auditing with process creation chains, network connections,
+                   DNS queries, and file hash logging — critical telemetry for threat detection.</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <div class="code-dots"><span></span><span></span><span></span></div>
+                        <span>PowerShell (Admin)</span>
+                    </div>
+                    <div class="code-body"><span class="cmd">cd</span> <span class="path">C:\Tools\Sysmon</span>
+<span class="cmd">.\Sysmon64.exe</span> <span class="flag">-accepteula -i</span>
+
+<span class="comment"># Verify Sysmon service is running</span>
+<span class="cmd">Get-Service</span> Sysmon64 | <span class="cmd">Select</span> Name, Status, StartType</div>
+                </div>
+                <div class="callout-blue callout">
+                    <div class="callout-label">Production Note</div>
+                    <p>In production, Sysmon is deployed with a tuned configuration file (e.g., SwiftOnSecurity/sysmon-config)
+                       to filter noise and focus on high-value events. The default config is acceptable for lab validation.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Wazuh Agent Installation</div>
+                <p>The agent handles secure enrollment with the Manager and continuous log forwarding
+                   across the host-only network.</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <div class="code-dots"><span></span><span></span><span></span></div>
+                        <span>PowerShell (Admin)</span>
+                    </div>
+                    <div class="code-body"><span class="comment"># After MSI install, set Manager IP</span>
+Manager IP: <span class="output">192.168.56.102</span>
+
+<span class="comment"># Verify agent service + connectivity</span>
+<span class="cmd">Get-Service</span> wazuhsvc | <span class="cmd">Select</span> Name, Status, StartType
+<span class="cmd">Test-NetConnection</span> <span class="output">192.168.56.102</span> <span class="flag">-Port 1514</span>
+<span class="cmd">Test-NetConnection</span> <span class="output">192.168.56.102</span> <span class="flag">-Port 1515</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- DETECTION WORKFLOW -->
+    <section class="section" id="detection">
+        <div class="section-label">Detection Workflow</div>
+        <div class="section-title">End-to-End Validation — Logs to Case</div>
+        <div class="section-desc">
+            The validation sequence proves that every link in the chain works: the agent is enrolled,
+            Sysmon events are reaching Wazuh, custom events are being ingested, and TheHive can receive
+            alerts via API. This is the difference between "I installed the tools" and "I built a working pipeline."
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="step-num">1</span>Confirm Agent Enrollment</div>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Wazuh VM</span>
+                </div>
+                <div class="code-body"><span class="cmd">sudo /var/ossec/bin/agent_control</span> <span class="flag">-lc</span>
+<span class="comment"># Should list the Windows agent as Active</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="step-num">2</span>Verify Sysmon Event Ingestion</div>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Wazuh VM — archives.json</span>
+                </div>
+                <div class="code-body"><span class="cmd">sudo tail</span> <span class="flag">-n 200</span> <span class="path">/var/ossec/logs/archives/archives.json</span> | \
+  <span class="cmd">grep</span> <span class="flag">'"id":"001"'</span> | <span class="cmd">tail</span> <span class="flag">-n 5</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="step-num">3</span>Application Log Injection Test</div>
+            <p>Create a synthetic event on Windows and confirm it arrives in Wazuh — proving bidirectional
+               telemetry flow.</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Windows 11 — Create Test Event</span>
+                </div>
+                <div class="code-body"><span class="cmd">eventcreate</span> <span class="flag">/T INFORMATION /ID 1000 /L APPLICATION /SO WazuhLab</span> \
+  <span class="flag">/D</span> <span class="output">"Wazuh test: Application log ingestion verified"</span></div>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Wazuh VM — Confirm Receipt</span>
+                </div>
+                <div class="code-body"><span class="cmd">sudo tail</span> <span class="flag">-n 400</span> <span class="path">/var/ossec/logs/archives/archives.json</span> | \
+  <span class="cmd">grep</span> <span class="flag">'"channel":"Application"'</span> | <span class="cmd">grep</span> <span class="output">'Wazuh test'</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="step-num">4</span>TheHive API Integration</div>
+            <p>Validate API connectivity and push a test alert from the Wazuh VM to TheHive.</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>API Health Check</span>
+                </div>
+                <div class="code-body"><span class="cmd">curl</span> <span class="flag">-s -o /dev/null -w</span> "%{http_code}\n" \
+  <span class="flag">-H</span> "Authorization: Bearer <span class="path">&lt;API_KEY&gt;</span>" \
+  "<span class="output">http://192.168.56.101:9000/api/status</span>"
+<span class="comment"># Expected: 200</span></div>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>Create Test Alert</span>
+                </div>
+                <div class="code-body"><span class="cmd">curl</span> <span class="flag">-s -X POST</span> "<span class="output">http://192.168.56.101:9000/api/alert</span>" \
+  <span class="flag">-H</span> "Authorization: Bearer <span class="path">&lt;API_KEY&gt;</span>" \
+  <span class="flag">-H</span> "Content-Type: application/json" \
+  <span class="flag">-d</span> '{
+    "type": "external",
+    "source": "wazuh",
+    "sourceRef": "SOC-LAB-001",
+    "title": "Test Alert — Pipeline Validation",
+    "description": "End-to-end validation alert",
+    "severity": 2
+  }'</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="step-num">5</span>Alert Promotion to Case</div>
+            <p>In TheHive UI: open the alert → <strong>Create Case</strong> → <strong>Empty Case</strong> → confirm.
+               This completes the full detection-to-case lifecycle — the same workflow a SOC analyst executes
+               during real incident triage.</p>
+        </div>
+
+        <div class="card" style="border-color: var(--accent-green); background: rgba(16, 185, 129, 0.03);">
+            <div class="card-title" style="color: var(--accent-green);">&#10003; Success Criteria — Pipeline Complete</div>
+            <div class="check-item">
+                <span class="check-icon">&#10003;</span>
+                <span class="check-text">Sysmon64 and wazuhsvc services running on Windows endpoint</span>
+            </div>
+            <div class="check-item">
+                <span class="check-icon">&#10003;</span>
+                <span class="check-text">Wazuh Dashboard shows Windows agent as Active</span>
+            </div>
+            <div class="check-item">
+                <span class="check-icon">&#10003;</span>
+                <span class="check-text">archives.json contains Sysmon events and custom Application test event</span>
+            </div>
+            <div class="check-item">
+                <span class="check-icon">&#10003;</span>
+                <span class="check-text">TheHive /api/status returns HTTP 200 with valid API key</span>
+            </div>
+            <div class="check-item">
+                <span class="check-icon">&#10003;</span>
+                <span class="check-text">Test alert visible in TheHive and successfully promoted to a case</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- MITRE ATT&CK MAPPING -->
+    <section class="section" id="mitre">
+        <div class="section-label">Framework Mapping</div>
+        <div class="section-title">MITRE ATT&amp;CK — Detection Coverage</div>
+        <div class="section-desc">
+            This lab's telemetry stack provides visibility into the following MITRE ATT&amp;CK techniques.
+            While the lab environment generates benign events, the same detection pipeline would surface
+            indicators of these techniques in a real environment.
+        </div>
+
+        <div class="card">
+            <div class="mitre-row">
+                <span class="mitre-id">T1059</span>
+                <span class="mitre-tactic">Execution</span>
+                <span class="mitre-desc">Command and Scripting Interpreter — Sysmon Event ID 1 (Process Creation) captures process execution chains including PowerShell, cmd.exe, and script interpreters.</span>
+            </div>
+            <div class="mitre-row">
+                <span class="mitre-id">T1053</span>
+                <span class="mitre-tactic">Persistence</span>
+                <span class="mitre-desc">Scheduled Task/Job — Sysmon monitors process creation that includes schtasks.exe and at.exe invocations.</span>
+            </div>
+            <div class="mitre-row">
+                <span class="mitre-id">T1071</span>
+                <span class="mitre-tactic">C2</span>
+                <span class="mitre-desc">Application Layer Protocol — Sysmon Event ID 3 (Network Connection) logs outbound connections with destination IPs, ports, and process context.</span>
+            </div>
+            <div class="mitre-row">
+                <span class="mitre-id">T1547</span>
+                <span class="mitre-tactic">Persistence</span>
+                <span class="mitre-desc">Boot or Logon Autostart Execution — Sysmon Event ID 13 (Registry Value Set) captures modifications to Run/RunOnce keys.</span>
+            </div>
+            <div class="mitre-row">
+                <span class="mitre-id">T1070</span>
+                <span class="mitre-tactic">Defense Evasion</span>
+                <span class="mitre-desc">Indicator Removal — Wazuh monitors Windows Security logs for Event ID 1102 (audit log cleared), a key anti-forensic indicator.</span>
+            </div>
+            <div class="mitre-row">
+                <span class="mitre-id">T1027</span>
+                <span class="mitre-tactic">Defense Evasion</span>
+                <span class="mitre-desc">Obfuscated Files — Sysmon Event ID 7 (Image Loaded) and Event ID 11 (File Created) provide file-level visibility for DLL sideloading and suspicious drops.</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- OPERATIONAL RUNBOOK -->
+    <section class="section" id="runbook">
+        <div class="section-label">Operational Procedures</div>
+        <div class="section-title">Daily Runbook &amp; Troubleshooting</div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Start Order</div>
+                <p style="margin-bottom: 0.8rem;">Start VMs in dependency order to avoid agent enrollment failures and API timeouts:</p>
+                <p><span class="tag tag-blue">1</span> &nbsp;Wazuh (SIEM must be listening before agents connect)</p>
+                <p style="margin-top: 0.4rem;"><span class="tag tag-green">2</span> &nbsp;TheHive (API must be available for alert forwarding)</p>
+                <p style="margin-top: 0.4rem;"><span class="tag tag-amber">3</span> &nbsp;Windows 11 (agent connects to Manager on boot)</p>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Common Issues &amp; Fixes</div>
+                <p><strong>Host-only interface DOWN after reboot:</strong> Check VirtualBox "Cable Connected" checkbox and run <code>sudo ip link set enp0s8 up && sudo netplan apply</code>.</p>
+                <p style="margin-top: 0.6rem;"><strong>TheHive container crash:</strong> Usually insufficient RAM or vCPU. Increase resources and check <code>docker logs cassandra</code> for root cause.</p>
+                <p style="margin-top: 0.6rem;"><strong>API permission error:</strong> Ensure the API key belongs to a user with <code>manageAlert/create</code> permission in the correct organization.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- TOOLS USED -->
+    <section class="section" id="tools">
+        <div class="section-label">Tools &amp; Technologies</div>
+        <div class="section-title">Technology Stack</div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Tool</th>
+                    <th>Role</th>
+                    <th>Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Oracle VirtualBox</strong></td>
+                    <td>Type-2 hypervisor for lab environment</td>
+                    <td><span class="tag tag-blue">Infrastructure</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Windows 11</strong></td>
+                    <td>Endpoint OS — telemetry source</td>
+                    <td><span class="tag tag-amber">Endpoint</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Ubuntu Server 24.04 LTS</strong></td>
+                    <td>Server OS for Wazuh and TheHive VMs</td>
+                    <td><span class="tag tag-blue">Infrastructure</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Sysmon (Sysinternals)</strong></td>
+                    <td>Advanced endpoint telemetry — process, network, file, registry</td>
+                    <td><span class="tag tag-cyan">Telemetry</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Wazuh 4.7</strong></td>
+                    <td>SIEM — log ingestion, indexing, dashboard, alerting</td>
+                    <td><span class="tag tag-green">Detection</span></td>
+                </tr>
+                <tr>
+                    <td><strong>TheHive 5.x</strong></td>
+                    <td>Case management — alert triage, investigation, response tracking</td>
+                    <td><span class="tag tag-purple">Response</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Docker Compose</strong></td>
+                    <td>Container orchestration for TheHive stack</td>
+                    <td><span class="tag tag-blue">Infrastructure</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- LESSONS LEARNED -->
+    <section class="section" id="lessons">
+        <div class="section-label">Reflections</div>
+        <div class="section-title">Lessons Learned &amp; Key Takeaways</div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Network Isolation Is the Foundation</div>
+                <p>The dual-NIC design was the single most impactful architectural decision. It taught me why
+                   production SOC environments use dedicated management networks — a SIEM that loses connectivity
+                   to its agents every time someone changes Wi-Fi is not a SIEM at all.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Validation Before Progression</div>
+                <p>Treating each step as a checkpoint — with explicit pass/fail criteria — eliminated cascading
+                   failures. When TheHive API calls failed, I knew networking and Wazuh ingestion were already
+                   verified, which immediately narrowed the problem space to API keys and permissions.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Telemetry Quality &gt; Quantity</div>
+                <p>Sysmon's process creation events provided more investigative value than the entire Windows
+                   Security log. Understanding which telemetry sources map to which detection use cases is
+                   a prerequisite for effective alert engineering.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Case Management Changes Thinking</div>
+                <p>Promoting an alert to a case forces structured thinking — what is the hypothesis? What evidence
+                   supports it? What is the next investigative step? This is fundamentally different from
+                   just reading a SIEM dashboard.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- FUTURE IMPROVEMENTS -->
+    <section class="section" id="future">
+        <div class="section-label">Roadmap</div>
+        <div class="section-title">Future Improvements</div>
+
+        <div class="card">
+            <div class="grid-2" style="gap: 1rem;">
+                <div>
+                    <p style="margin-bottom: 0.5rem;"><span class="tag tag-cyan">DETECTION</span></p>
+                    <p>Write custom Wazuh rules targeting specific Sysmon Event IDs — process injection (Event ID 8), named pipe creation (Event ID 17), and DNS queries (Event ID 22) — to build a focused detection rule library.</p>
+                </div>
+                <div>
+                    <p style="margin-bottom: 0.5rem;"><span class="tag tag-green">AUTOMATION</span></p>
+                    <p>Integrate Shuffle SOAR between Wazuh and TheHive for automated alert enrichment — pull VirusTotal hash lookups and auto-create TheHive cases from high-severity Wazuh alerts.</p>
+                </div>
+                <div>
+                    <p style="margin-bottom: 0.5rem;"><span class="tag tag-amber">ADVERSARY SIM</span></p>
+                    <p>Deploy Atomic Red Team on the Windows endpoint to execute MITRE ATT&amp;CK techniques and validate detection coverage against known attack patterns.</p>
+                </div>
+                <div>
+                    <p style="margin-bottom: 0.5rem;"><span class="tag tag-purple">THREAT INTEL</span></p>
+                    <p>Add MISP integration for IOC ingestion, enabling correlation of lab-generated events against known threat intelligence feeds.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p class="footer-text">Yousef Nabil &mdash; SOC Analyst Portfolio</p>
+    <div class="footer-links">
+        <a href="https://github.com/YousefNabil-SOC">GitHub</a>
+        <a href="https://www.linkedin.com/in/yousef-nabil-79a431287/">LinkedIn</a>
+        <a href="https://yousefnabil-soc.github.io/incident-reports/">Incident Reports</a>
+    </div>
+</footer>
+
+</body>
+</html>

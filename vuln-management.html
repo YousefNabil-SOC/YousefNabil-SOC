@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerability Management Program — Yousef Nabil</title>
+    <meta name="description" content="End-to-end vulnerability management program: Tenable scanning, prioritization, scripted remediation, verification, and maintenance on Azure.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #151d2e;
+            --bg-code: #0d1117;
+            --border: #1e2d45;
+            --border-accent: #1a3a5c;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #22d3ee;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #a78bfa;
+            --glow-blue: rgba(59, 130, 246, 0.15);
+            --glow-cyan: rgba(34, 211, 238, 0.1);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* === NAVIGATION === */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(10, 14, 23, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+        }
+        .nav-inner {
+            max-width: 1100px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between; height: 60px;
+        }
+        .nav-brand {
+            font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem;
+            font-weight: 600; color: var(--accent-cyan); text-decoration: none; letter-spacing: 0.5px;
+        }
+        .nav-links { display: flex; gap: 0.25rem; list-style: none; overflow-x: auto; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; font-size: 0.78rem;
+            padding: 0.4rem 0.7rem; border-radius: 6px; transition: all 0.2s; white-space: nowrap;
+        }
+        .nav-links a:hover { color: var(--text-primary); background: var(--bg-card); }
+
+        /* === HERO === */
+        .hero {
+            padding: 8rem 2rem 4rem; text-align: center; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(167, 139, 250, 0.12), transparent);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 500;
+            color: var(--accent-purple); background: rgba(167, 139, 250, 0.08);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            padding: 0.4rem 1rem; border-radius: 20px; margin-bottom: 1.5rem;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; line-height: 1.2; margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-sub {
+            font-size: 1.1rem; color: var(--text-secondary);
+            max-width: 720px; margin: 0 auto 2rem; line-height: 1.8;
+        }
+        .hero-meta { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem; }
+        .hero-meta-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.82rem; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace;
+        }
+        .hero-meta-item .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .dot-green { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+        .dot-purple { background: var(--accent-purple); box-shadow: 0 0 8px var(--accent-purple); }
+        .dot-amber { background: var(--accent-amber); box-shadow: 0 0 8px var(--accent-amber); }
+
+        /* === MAIN CONTENT === */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+        /* === SECTION === */
+        .section { margin-bottom: 4rem; scroll-margin-top: 80px; }
+        .section-label {
+            font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; font-weight: 600;
+            color: var(--accent-purple); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;
+        }
+        .section-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--text-primary); }
+        .section-desc { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1.5rem; }
+
+        /* === CARDS === */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 1.8rem; margin-bottom: 1.5rem; transition: border-color 0.3s;
+        }
+        .card:hover { border-color: var(--border-accent); }
+        .card-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.8rem; color: var(--text-primary); }
+        .card p, .card li { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.75; }
+
+        /* === LIFECYCLE DIAGRAM === */
+        .lifecycle {
+            background: var(--bg-code); border: 1px solid var(--border); border-radius: 12px;
+            padding: 2.5rem; margin: 2rem 0; overflow-x: auto;
+        }
+        .lifecycle-flow {
+            display: flex; align-items: stretch; justify-content: center;
+            gap: 0; flex-wrap: wrap; margin: 1rem 0;
+        }
+        .lifecycle-step {
+            text-align: center; padding: 1.2rem 1rem; min-width: 140px;
+            position: relative; flex: 1;
+        }
+        .lifecycle-step::after {
+            content: ''; position: absolute; top: 50%; right: 0;
+            width: 0; height: 0; border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent; border-left: 10px solid var(--border-accent);
+            transform: translateY(-50%);
+        }
+        .lifecycle-step:last-child::after { display: none; }
+        .lifecycle-num {
+            font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+            color: var(--accent-purple); letter-spacing: 1px; margin-bottom: 0.3rem;
+        }
+        .lifecycle-name {
+            font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem;
+        }
+        .lifecycle-detail { font-size: 0.72rem; color: var(--text-muted); }
+
+        /* === CODE BLOCKS === */
+        .code-block {
+            background: var(--bg-code); border: 1px solid var(--border);
+            border-radius: 10px; margin: 1rem 0; overflow: hidden;
+        }
+        .code-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.6rem 1rem; background: rgba(30, 45, 69, 0.4);
+            border-bottom: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-muted);
+        }
+        .code-dots { display: flex; gap: 6px; }
+        .code-dots span { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+        .code-dots span:first-child { background: #ef4444; }
+        .code-dots span:nth-child(2) { background: #f59e0b; }
+        .code-dots span:last-child { background: #10b981; }
+        .code-body {
+            padding: 1rem 1.2rem; font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem; line-height: 1.7; color: var(--text-secondary);
+            overflow-x: auto; white-space: pre;
+        }
+        .code-body .cmd { color: var(--accent-cyan); }
+        .code-body .comment { color: var(--text-muted); font-style: italic; }
+        .code-body .output { color: var(--accent-green); }
+        .code-body .flag { color: var(--accent-amber); }
+        .code-body .path { color: var(--accent-purple); }
+        .code-body .danger { color: var(--accent-red); }
+
+        /* === TABLE === */
+        .data-table {
+            width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.88rem;
+        }
+        .data-table th {
+            text-align: left; padding: 0.75rem 1rem; background: var(--bg-code);
+            color: var(--accent-purple); font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; border-bottom: 1px solid var(--border);
+        }
+        .data-table td {
+            padding: 0.75rem 1rem; border-bottom: 1px solid rgba(30, 45, 69, 0.5);
+            color: var(--text-secondary);
+        }
+        .data-table tr:hover td { background: rgba(30, 45, 69, 0.3); }
+
+        /* === TAGS === */
+        .tag {
+            display: inline-block; font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.68rem; font-weight: 500; padding: 0.2rem 0.6rem;
+            border-radius: 4px; letter-spacing: 0.5px;
+        }
+        .tag-blue { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .tag-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .tag-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+        .tag-red { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .tag-purple { background: rgba(167, 139, 250, 0.15); color: var(--accent-purple); }
+        .tag-cyan { background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); }
+
+        /* === GRID === */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; }
+
+        /* === CALLOUT === */
+        .callout {
+            border-left: 3px solid var(--accent-amber); background: rgba(245, 158, 11, 0.05);
+            padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin: 1rem 0;
+        }
+        .callout p { color: var(--text-secondary); font-size: 0.88rem; }
+        .callout-label {
+            font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; font-weight: 600;
+            color: var(--accent-amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem;
+        }
+        .callout-blue { border-left-color: var(--accent-blue); background: rgba(59, 130, 246, 0.05); }
+        .callout-blue .callout-label { color: var(--accent-blue); }
+
+        /* === REMEDIATION ROUND === */
+        .round {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            margin-bottom: 1.5rem; overflow: hidden;
+        }
+        .round-header {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1.2rem 1.5rem; background: rgba(30, 45, 69, 0.3);
+            border-bottom: 1px solid var(--border);
+        }
+        .round-num {
+            font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; font-weight: 600;
+            color: var(--accent-purple); text-transform: uppercase; letter-spacing: 1.5px; min-width: 70px;
+        }
+        .round-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+        .round-body { padding: 1.5rem; }
+        .round-body p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.75; }
+        .round-meta {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem; margin-top: 1rem;
+        }
+        .round-meta-item {
+            padding: 0.8rem; background: var(--bg-code); border-radius: 8px;
+            border: 1px solid rgba(30, 45, 69, 0.5);
+        }
+        .round-meta-label {
+            font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem;
+        }
+        .round-meta-value { font-size: 0.88rem; color: var(--text-secondary); }
+
+        /* === METRICS BAR === */
+        .metric-bar-container { margin: 1.5rem 0; }
+        .metric-bar-label {
+            display: flex; justify-content: space-between; margin-bottom: 0.4rem;
+            font-size: 0.82rem; color: var(--text-secondary);
+        }
+        .metric-bar {
+            height: 10px; background: var(--bg-code); border-radius: 5px;
+            overflow: hidden; border: 1px solid var(--border);
+        }
+        .metric-bar-fill {
+            height: 100%; border-radius: 5px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+            transition: width 0.5s ease;
+        }
+
+        /* === STEP INDICATOR === */
+        .step-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px; border-radius: 50%;
+            background: rgba(167, 139, 250, 0.12); border: 1px solid var(--accent-purple);
+            color: var(--accent-purple); font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem; font-weight: 600; margin-right: 0.7rem; flex-shrink: 0;
+        }
+
+        /* === FOOTER === */
+        .footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+        .footer-text { font-size: 0.82rem; color: var(--text-muted); }
+        .footer a { color: var(--accent-cyan); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 0.8rem; }
+
+        /* === DIVIDER === */
+        .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 3rem 0; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 6rem 1.5rem 3rem; }
+            .container { padding: 0 1.5rem 3rem; }
+            .lifecycle-flow { flex-direction: column; align-items: center; }
+            .lifecycle-step::after { display: none; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .round-header { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="https://github.com/YousefNabil-SOC" class="nav-brand">YOUSEF NABIL / SOC</a>
+        <ul class="nav-links">
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#lifecycle">Lifecycle</a></li>
+            <li><a href="#scanning">Scanning</a></li>
+            <li><a href="#remediation">Remediation</a></li>
+            <li><a href="#scripts">Scripts</a></li>
+            <li><a href="#metrics">Metrics</a></li>
+            <li><a href="#maintenance">Maintenance</a></li>
+            <li><a href="#lessons">Lessons</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="hero-badge">&#9632; Vulnerability Management Program</div>
+    <h1>Vulnerability Management Program:<br>Inception to Maintenance</h1>
+    <p class="hero-sub">
+        Complete vulnerability management lifecycle — from stakeholder buy-in and authenticated scanning
+        through prioritized remediation, independent verification by rescan, and transition to maintenance
+        mode. Built on Azure with Tenable and a reusable remediation script library.
+    </p>
+    <div class="hero-meta">
+        <span class="hero-meta-item"><span class="dot dot-purple"></span> Tenable VM (Cloud)</span>
+        <span class="hero-meta-item"><span class="dot dot-green"></span> Microsoft Azure</span>
+        <span class="hero-meta-item"><span class="dot dot-amber"></span> PowerShell + Bash Remediation</span>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- EXECUTIVE SUMMARY -->
+    <section class="section" id="overview">
+        <div class="section-label">Executive Summary</div>
+        <div class="section-title">What This Project Demonstrates</div>
+        <div class="section-desc">
+            This project implements a vulnerability management program — not just a scan. The distinction matters:
+            scanning finds weaknesses, but a program encompasses the entire workflow from initial risk assessment
+            and stakeholder alignment through prioritized remediation, verification, and sustainable operations.
+        </div>
+        <div class="section-desc">
+            Every remediation is scripted, tested, and validated through independent rescan — the same discipline
+            required in enterprise environments where unverified fixes create compliance gaps and false confidence.
+            The project includes a reusable remediation library that maps Tenable Plugin IDs and CVEs to executable
+            scripts, enabling repeatable fixes across environments.
+        </div>
+
+        <div class="grid-3" style="margin-top: 1.5rem;">
+            <div class="card">
+                <div class="card-title">&#128270; Discover &amp; Assess</div>
+                <p>Authenticated scanning on Azure VMs using Tenable with credentialed checks — validating patch levels,
+                   local security policy, and installed software beyond what network-only scans reveal.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">&#128736; Remediate &amp; Verify</div>
+                <p>Scripted remediation with rollback capability, staged deployment (one host first),
+                   and independent verification through rescan — not self-attestation.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">&#128202; Measure &amp; Sustain</div>
+                <p>Quantified risk reduction (80% vulnerability decrease), KPI tracking, and transition to
+                   recurring scan cadence with SLA-driven follow-up.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ARCHITECTURE -->
+    <section class="section" id="architecture">
+        <div class="section-label">Lab Architecture</div>
+        <div class="section-title">Azure Environment &amp; Scan Topology</div>
+        <div class="section-desc">
+            The lab uses Microsoft Azure to host the scan infrastructure and target VMs. Tenable Vulnerability
+            Management (cloud console) orchestrates scans through a Nessus scan engine deployed inside the Azure
+            environment. This architecture mirrors how enterprise organizations deploy distributed scanning —
+            the management plane stays in SaaS while scan engines sit close to targets for credentialed access.
+        </div>
+
+        <div class="lifecycle">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <span class="tag tag-purple" style="font-size: 0.75rem;">SCAN ARCHITECTURE</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+                <div style="background: var(--bg-card); border: 1px solid var(--accent-purple); border-radius: 10px; padding: 1.2rem 1.5rem; text-align: center; min-width: 170px;">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent-purple); margin-bottom: 0.3rem;">SaaS Console</div>
+                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Tenable VM</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">cloud.tenable.com</div>
+                </div>
+                <div style="color: var(--accent-blue); font-size: 1.2rem;">&#8596;</div>
+                <div style="background: var(--bg-card); border: 1px solid var(--accent-blue); border-radius: 10px; padding: 1.2rem 1.5rem; text-align: center; min-width: 170px;">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent-blue); margin-bottom: 0.3rem;">Scan Engine</div>
+                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Nessus (Azure VM)</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">Private subnet</div>
+                </div>
+                <div style="color: var(--accent-blue); font-size: 1.2rem;">&#8594;</div>
+                <div style="background: var(--bg-card); border: 1px solid var(--accent-amber); border-radius: 10px; padding: 1.2rem 1.5rem; text-align: center; min-width: 170px;">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent-amber); margin-bottom: 0.3rem;">Targets</div>
+                    <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">Windows + Linux</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">Intentionally vulnerable</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 1.5rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: var(--text-muted);">
+                Console &#8596; Engine (API) &nbsp;&nbsp;|&nbsp;&nbsp; Engine &#8594; Targets (Credentialed Scans)
+            </div>
+        </div>
+
+        <div class="callout-blue callout">
+            <div class="callout-label">Design Decision</div>
+            <p>Targets use intentionally weakened configurations — outdated software, legacy protocols enabled,
+               misconfigured permissions — to generate realistic scan findings. This creates a genuine remediation
+               backlog rather than scanning a hardened system and claiming zero vulnerabilities.</p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- VULNERABILITY LIFECYCLE -->
+    <section class="section" id="lifecycle">
+        <div class="section-label">Program Framework</div>
+        <div class="section-title">Vulnerability Management Lifecycle</div>
+        <div class="section-desc">
+            The lifecycle follows enterprise methodology: each phase has defined inputs, outputs, and gates.
+            Remediation only moves to the next round after rescan verification confirms the fix. This prevents
+            the common failure mode where teams mark vulnerabilities as "resolved" without independent validation.
+        </div>
+
+        <div class="lifecycle">
+            <div class="lifecycle-flow">
+                <div class="lifecycle-step">
+                    <div class="lifecycle-num">Phase 01</div>
+                    <div class="lifecycle-name">Stakeholder Buy-In</div>
+                    <div class="lifecycle-detail">Policy + scope + ownership</div>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-num">Phase 02</div>
+                    <div class="lifecycle-name">Authenticated Scan</div>
+                    <div class="lifecycle-detail">Credentialed baseline</div>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-num">Phase 03</div>
+                    <div class="lifecycle-name">Triage &amp; Prioritize</div>
+                    <div class="lifecycle-detail">Risk-based ranking</div>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-num">Phase 04</div>
+                    <div class="lifecycle-name">CAB &amp; Remediate</div>
+                    <div class="lifecycle-detail">Scripted + staged fixes</div>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-num">Phase 05</div>
+                    <div class="lifecycle-name">Verify by Rescan</div>
+                    <div class="lifecycle-detail">Independent validation</div>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-num">Phase 06</div>
+                    <div class="lifecycle-name">Maintenance</div>
+                    <div class="lifecycle-detail">Recurring ops + KPIs</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SCANNING -->
+    <section class="section" id="scanning">
+        <div class="section-label">Discovery Phase</div>
+        <div class="section-title">Authenticated Scanning &amp; Baseline Analysis</div>
+
+        <div class="card">
+            <div class="card-title">Why Authenticated Scanning</div>
+            <p>Unauthenticated (network) scans see what an external attacker sees. Authenticated scans log into the target
+               and inspect installed patches, local group membership, registry settings, file permissions, and service
+               configurations. The difference is often 3-5x more findings — and the additional findings are typically
+               the ones that matter most for local privilege escalation and lateral movement.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Prioritization Strategy</div>
+            <p>Raw scan results were triaged into remediation rounds using this priority order — attack surface reduction
+               first, then defense hardening, then patching. This sequence maximizes risk reduction per hour of effort.</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Priority</th>
+                        <th>Category</th>
+                        <th>Rationale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="tag tag-red">P1</span></td>
+                        <td>Attack Surface Removal</td>
+                        <td>Remove unnecessary software (Wireshark, outdated Firefox) — eliminates entire vulnerability classes</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag tag-amber">P2</span></td>
+                        <td>Cryptographic Hardening</td>
+                        <td>Disable legacy protocols (SSL 2.0/3.0, TLS 1.0/1.1) and enforce strong cipher suites</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag tag-amber">P3</span></td>
+                        <td>Privilege &amp; Access Fixes</td>
+                        <td>Remove guest from Administrators, disable guest account, fix file permissions</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag tag-blue">P4</span></td>
+                        <td>OS &amp; Software Patching</td>
+                        <td>Apply OS updates, upgrade OpenSSL, address remaining CVEs</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- REMEDIATION ROUNDS -->
+    <section class="section" id="remediation">
+        <div class="section-label">Remediation Execution</div>
+        <div class="section-title">Structured Remediation Rounds</div>
+        <div class="section-desc">
+            Each remediation follows a consistent workflow: document the finding, explain the risk in business
+            terms, prepare the script with rollback, stage on one host, verify by rescan, then roll to remaining
+            targets. This mirrors the Change Advisory Board (CAB) process used in ITIL-governed environments.
+        </div>
+
+        <!-- Round 1 -->
+        <div class="round">
+            <div class="round-header">
+                <span class="round-num">Round 1</span>
+                <span class="round-title">Outdated Software Removal — Wireshark &amp; Firefox</span>
+            </div>
+            <div class="round-body">
+                <p><strong>Finding:</strong> Third-party tools installed on servers where they serve no operational purpose.
+                   Outdated versions contain known CVEs exploitable for local privilege escalation or remote code execution.</p>
+                <p style="margin-top: 0.5rem;"><strong>Risk:</strong> Every unnecessary application expands the attack surface. An outdated Wireshark
+                   on a server is a privilege escalation vector that exists purely because no one removed it.</p>
+                <div class="round-meta">
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Action</div>
+                        <div class="round-meta-value">Silent uninstall via PowerShell scripts</div>
+                    </div>
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Validation</div>
+                        <div class="round-meta-value">Tenable rescan — related plugin findings cleared</div>
+                    </div>
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Rollback</div>
+                        <div class="round-meta-value">Reinstall from archived installer if needed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Round 2 -->
+        <div class="round">
+            <div class="round-header">
+                <span class="round-num">Round 2</span>
+                <span class="round-title">Protocol &amp; Cipher Suite Hardening</span>
+            </div>
+            <div class="round-body">
+                <p><strong>Finding:</strong> Legacy SSL/TLS protocols (SSL 2.0, SSL 3.0, TLS 1.0, TLS 1.1) and weak cipher suites
+                   enabled. SMBv1 active on endpoints.</p>
+                <p style="margin-top: 0.5rem;"><strong>Risk:</strong> Weak cryptographic protocols enable man-in-the-middle attacks and are targeted by tools
+                   like POODLE (SSL 3.0) and BEAST (TLS 1.0). SMBv1 is the attack surface for EternalBlue (MS17-010).</p>
+                <div class="round-meta">
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Action</div>
+                        <div class="round-meta-value">Registry-based protocol/cipher toggles, SMBv1 feature disable</div>
+                    </div>
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Validation</div>
+                        <div class="round-meta-value">Rescan + app compatibility check</div>
+                    </div>
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Staging</div>
+                        <div class="round-meta-value">One host first — legacy clients may break</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Round 3 -->
+        <div class="round">
+            <div class="round-header">
+                <span class="round-num">Round 3</span>
+                <span class="round-title">Privilege &amp; Access Control Remediation</span>
+            </div>
+            <div class="round-body">
+                <p><strong>Finding:</strong> Guest account active and added to local Administrators group. Linux file permissions
+                   on <code>/etc/shadow</code> and <code>/etc/passwd</code> set to world-readable/writable (777).</p>
+                <p style="margin-top: 0.5rem;"><strong>Risk:</strong> Guest-in-Administrators is a textbook privilege escalation path — any user can
+                   authenticate as Guest and inherit full admin rights. World-writable shadow files allow any
+                   local user to modify password hashes.</p>
+                <div class="round-meta">
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Windows Fix</div>
+                        <div class="round-meta-value">Remove Guest from Admins, disable Guest account</div>
+                    </div>
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Linux Fix</div>
+                        <div class="round-meta-value">Restore /etc/shadow (400), /etc/passwd (644)</div>
+                    </div>
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Validation</div>
+                        <div class="round-meta-value">Rescan + group membership verification</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Round 4 -->
+        <div class="round">
+            <div class="round-header">
+                <span class="round-num">Round 4</span>
+                <span class="round-title">OS Updates &amp; CVE Patching</span>
+            </div>
+            <div class="round-body">
+                <p><strong>Finding:</strong> OS patch level stale, OpenSSL vulnerable to known CVEs, WinVerifyTrust
+                   signature validation bypass (CVE-2013-3900) unpatched.</p>
+                <p style="margin-top: 0.5rem;"><strong>Risk:</strong> Known vulnerabilities with public exploits remain active. CVE-2013-3900
+                   allows attackers to modify signed executables without invalidating the signature — a defense
+                   evasion technique used in real-world supply chain attacks.</p>
+                <div class="round-meta">
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Windows</div>
+                        <div class="round-meta-value">Registry fix for CVE-2013-3900, Windows Update</div>
+                    </div>
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Linux</div>
+                        <div class="round-meta-value">OpenSSL source build (3.0.5), full apt upgrade</div>
+                    </div>
+                    <div class="round-meta-item">
+                        <div class="round-meta-label">Telnet</div>
+                        <div class="round-meta-value">Service stop, package purge, dependency cleanup</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- REMEDIATION SCRIPTS -->
+    <section class="section" id="scripts">
+        <div class="section-label">Remediation Library</div>
+        <div class="section-title">Scripted Remediation — Select Examples</div>
+        <div class="section-desc">
+            Every remediation is scripted for repeatability and audit trail. The library maps each Tenable Plugin ID
+            to a CVE and a corresponding script. Below are representative examples from each remediation category.
+        </div>
+
+        <div class="card">
+            <div class="card-title">Software Removal — Wireshark Uninstall</div>
+            <p style="margin-bottom: 0.5rem;"><span class="tag tag-amber">PowerShell</span> <span class="tag tag-red">Requires Admin</span></p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>remediation-wireshark-uninstall.ps1</span>
+                </div>
+                <div class="code-body"><span class="comment"># Silent uninstall of Wireshark from target system</span>
+<span class="path">$uninstallerPath</span> = "$env:ProgramFiles\Wireshark\uninstall.exe"
+<span class="path">$silentSwitch</span>    = "/S"
+
+<span class="cmd">function</span> Is-WiresharkInstalled {
+    <span class="cmd">return</span> Test-Path -Path <span class="path">$uninstallerPath</span>
+}
+
+<span class="cmd">function</span> Uninstall-Wireshark {
+    <span class="cmd">if</span> (Is-WiresharkInstalled) {
+        Write-Output <span class="output">"Uninstalling Wireshark..."</span>
+        & <span class="path">$uninstallerPath</span> <span class="path">$silentSwitch</span>
+        Write-Output <span class="output">"Wireshark has been uninstalled."</span>
+    } <span class="cmd">else</span> {
+        Write-Output <span class="output">"Wireshark is not installed."</span>
+    }
+}
+
+Uninstall-Wireshark</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Protocol Hardening — Disable SMBv1</div>
+            <p style="margin-bottom: 0.5rem;"><span class="tag tag-amber">PowerShell</span> <span class="tag tag-red">Requires Admin</span></p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>remediation-SMBv1.ps1</span>
+                </div>
+                <div class="code-body"><span class="comment"># Disable SMBv1 protocol, client, and server components</span>
+<span class="cmd">Disable-WindowsOptionalFeature</span> <span class="flag">-Online</span> -FeatureName SMB1Protocol <span class="flag">-NoRestart</span>
+
+<span class="comment"># Disable SMBv1 Client — block insecure guest auth</span>
+<span class="cmd">Set-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\...\LanmanWorkstation\Parameters"</span> \
+  -Name "AllowInsecureGuestAuth" -Value <span class="danger">0</span>
+<span class="cmd">Set-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\...\mrxsmb10"</span> \
+  -Name "Start" -Value <span class="danger">4</span>  <span class="comment"># 4 = Disabled</span>
+
+<span class="comment"># Disable SMBv1 Server</span>
+<span class="cmd">Set-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\...\LanmanServer\Parameters"</span> \
+  -Name "SMB1" -Value <span class="danger">0</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Linux Permissions — Restore Shadow File Security</div>
+            <p style="margin-bottom: 0.5rem;"><span class="tag tag-cyan">Bash</span> <span class="tag tag-red">Requires Root</span></p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>passwd-Linux-Remediate.sh</span>
+                </div>
+                <div class="code-body"><span class="comment">#!/bin/bash</span>
+<span class="comment"># Restore secure file permissions on critical auth files</span>
+<span class="cmd">chmod</span> <span class="flag">400</span> <span class="path">/etc/shadow</span>   <span class="comment"># Owner read-only (root)</span>
+<span class="cmd">chmod</span> <span class="flag">644</span> <span class="path">/etc/passwd</span>   <span class="comment"># Owner read-write, world readable</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Telnet Service Removal</div>
+            <p style="margin-bottom: 0.5rem;"><span class="tag tag-cyan">Bash</span> <span class="tag tag-red">Requires Root</span></p>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span>remediation-Telnet-Remove.sh</span>
+                </div>
+                <div class="code-body"><span class="comment">#!/bin/bash</span>
+<span class="comment"># Stop, disable, and fully purge Telnet service</span>
+<span class="cmd">sudo systemctl stop</span> inetd.service
+<span class="cmd">sudo systemctl disable</span> inetd.service
+
+<span class="cmd">sudo apt remove</span> <span class="flag">--purge</span> telnetd <span class="flag">-y</span>
+<span class="cmd">sudo apt remove</span> <span class="flag">--purge</span> inetutils-inetd <span class="flag">-y</span>
+<span class="cmd">sudo apt autoremove</span> <span class="flag">-y</span>
+<span class="cmd">sudo apt update</span></div>
+            </div>
+        </div>
+
+        <div class="callout">
+            <div class="callout-label">Script Library Design</div>
+            <p>Each script in the library maps to a specific Tenable Plugin ID and CVE. The naming convention
+               (<code>remediation-{component}.{ext}</code>) enables rapid lookup during remediation sprints.
+               Toggle scripts allow both vulnerability creation (for lab reset) and remediation, supporting
+               repeatable testing cycles.</p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- METRICS -->
+    <section class="section" id="metrics">
+        <div class="section-label">Results</div>
+        <div class="section-title">Risk Reduction Metrics</div>
+        <div class="section-desc">
+            All metrics are based on Tenable rescan results — not self-reported status. Each remediation round
+            was followed by an independent scan to confirm that findings were resolved, not just assumed fixed.
+        </div>
+
+        <div class="card">
+            <div class="card-title">Aggregate Vulnerability Reduction</div>
+            <div class="metric-bar-container">
+                <div class="metric-bar-label">
+                    <span>Total Vulnerabilities</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace;">30 &#8594; 6</span>
+                </div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="width: 80%;"></div>
+                </div>
+                <div style="text-align: right; margin-top: 0.3rem;">
+                    <span class="tag tag-green" style="font-size: 0.8rem;">80% REDUCTION</span>
+                </div>
+            </div>
+
+            <table class="data-table" style="margin-top: 1.5rem;">
+                <thead>
+                    <tr>
+                        <th>Round</th>
+                        <th>Category</th>
+                        <th>Findings Resolved</th>
+                        <th>Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="tag tag-red">R1</span></td>
+                        <td>Software Removal</td>
+                        <td>Wireshark + Firefox findings cleared</td>
+                        <td>Silent uninstall scripts</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag tag-amber">R2</span></td>
+                        <td>Crypto Hardening</td>
+                        <td>SSL/TLS + cipher + SMBv1 findings cleared</td>
+                        <td>Registry toggles + feature disable</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag tag-amber">R3</span></td>
+                        <td>Privilege Fixes</td>
+                        <td>Guest/admin + file permission findings cleared</td>
+                        <td>Group policy + chmod scripts</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag tag-blue">R4</span></td>
+                        <td>Patching</td>
+                        <td>CVE + OS update findings cleared</td>
+                        <td>Registry fix, apt upgrade, OpenSSL build</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- MAINTENANCE MODE -->
+    <section class="section" id="maintenance">
+        <div class="section-label">Sustainment</div>
+        <div class="section-title">Transition to Maintenance Mode</div>
+        <div class="section-desc">
+            Remediation is a sprint. Maintenance is the marathon. Transitioning to maintenance mode means establishing
+            recurring scan cadences, SLA-tracked follow-ups, and KPIs that measure program health — not just
+            point-in-time vulnerability counts.
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Operational Cadence</div>
+                <p>Scheduled authenticated scans on a recurring cycle (weekly for critical assets, monthly for standard).
+                   Each scan generates a diff report against the previous baseline, highlighting new findings,
+                   recurring issues, and successfully maintained remediations.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Program KPIs</div>
+                <table class="data-table" style="margin: 0.5rem 0 0;">
+                    <tbody>
+                        <tr><td><strong>MTTR</strong></td><td>Mean Time to Remediate — by severity</td></tr>
+                        <tr><td><strong>SLA Compliance</strong></td><td>% of findings remediated within SLA window</td></tr>
+                        <tr><td><strong>Recurrence Rate</strong></td><td>Previously fixed findings that reappear</td></tr>
+                        <tr><td><strong>Patch Compliance</strong></td><td>% of systems at current patch baseline</td></tr>
+                        <tr><td><strong>Exception Tracking</strong></td><td>Accepted risks with defined expiry dates</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- TOOLS USED -->
+    <section class="section" id="tools">
+        <div class="section-label">Tools &amp; Technologies</div>
+        <div class="section-title">Technology Stack</div>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>Tool</th><th>Role</th><th>Category</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Tenable VM</strong></td>
+                    <td>Cloud vulnerability management console — scan orchestration and reporting</td>
+                    <td><span class="tag tag-purple">Scanner</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Nessus (Azure VM)</strong></td>
+                    <td>Distributed scan engine — credentialed scanning of targets</td>
+                    <td><span class="tag tag-purple">Scanner</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Microsoft Azure</strong></td>
+                    <td>Cloud infrastructure — scan engine and target VM hosting</td>
+                    <td><span class="tag tag-blue">Infrastructure</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Windows Server 2019</strong></td>
+                    <td>Target OS — intentionally misconfigured for scan findings</td>
+                    <td><span class="tag tag-amber">Target</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Ubuntu Linux</strong></td>
+                    <td>Target OS — file permission and service vulnerabilities</td>
+                    <td><span class="tag tag-amber">Target</span></td>
+                </tr>
+                <tr>
+                    <td><strong>PowerShell 5.1</strong></td>
+                    <td>Windows remediation scripting — registry, services, features</td>
+                    <td><span class="tag tag-green">Remediation</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Bash</strong></td>
+                    <td>Linux remediation scripting — permissions, packages, services</td>
+                    <td><span class="tag tag-green">Remediation</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- LESSONS LEARNED -->
+    <section class="section" id="lessons">
+        <div class="section-label">Reflections</div>
+        <div class="section-title">Lessons Learned &amp; Key Takeaways</div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Authenticated &gt; Unauthenticated</div>
+                <p>The gap between credentialed and non-credentialed scan results was substantial. Local privilege
+                   issues, file permission weaknesses, and registry misconfigurations are invisible to network-only
+                   scans — yet these are often the findings that matter most for lateral movement.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Verification Prevents False Confidence</div>
+                <p>Without rescan verification, "remediated" just means "we ran a script and hope it worked."
+                   Two of four remediation rounds required follow-up adjustments that would have been missed
+                   without independent validation.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Prioritization Multiplies Impact</div>
+                <p>Removing two unnecessary applications in Round 1 eliminated more findings than the full OS
+                   patching cycle in Round 4. Attack surface reduction is the highest-leverage remediation
+                   category — and it requires no patching windows or change control risk.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Scripts Enable Scale</div>
+                <p>A remediation that works once on one host has limited value. Scripted, parameterized
+                   remediations with toggle capability can be deployed across hundreds of systems in a
+                   maintenance window — and reversed if something breaks.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- FUTURE IMPROVEMENTS -->
+    <section class="section" id="future">
+        <div class="section-label">Roadmap</div>
+        <div class="section-title">Future Improvements</div>
+
+        <div class="card">
+            <div class="grid-2" style="gap: 1rem;">
+                <div>
+                    <p style="margin-bottom: 0.5rem;"><span class="tag tag-purple">AUTOMATION</span></p>
+                    <p>Integrate Tenable API exports with a remediation orchestration pipeline — automatically
+                       map new findings to existing scripts and generate deployment packages.</p>
+                </div>
+                <div>
+                    <p style="margin-bottom: 0.5rem;"><span class="tag tag-green">COMPLIANCE</span></p>
+                    <p>Map scan findings to CIS Benchmark controls and NIST 800-53 requirements to demonstrate
+                       compliance posture alongside vulnerability status.</p>
+                </div>
+                <div>
+                    <p style="margin-bottom: 0.5rem;"><span class="tag tag-amber">REPORTING</span></p>
+                    <p>Build an automated dashboard using Tenable API data — trend lines for MTTR, SLA compliance
+                       tracking, and executive-ready risk reduction visualizations.</p>
+                </div>
+                <div>
+                    <p style="margin-bottom: 0.5rem;"><span class="tag tag-cyan">EXPANSION</span></p>
+                    <p>Extend the remediation library to cover Linux-specific hardening (SSH configuration,
+                       kernel parameters, auditd rules) and cloud-native misconfiguration findings.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p class="footer-text">Yousef Nabil &mdash; SOC Analyst Portfolio</p>
+    <div class="footer-links">
+        <a href="https://github.com/YousefNabil-SOC">GitHub</a>
+        <a href="https://www.linkedin.com/in/yousef-nabil-79a431287/">LinkedIn</a>
+        <a href="https://yousefnabil-soc.github.io/incident-reports/">Incident Reports</a>
+    </div>
+</footer>
+
+</body>
+</html>
