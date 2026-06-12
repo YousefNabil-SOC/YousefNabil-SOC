@@ -30,17 +30,17 @@ I build AI systems that ship: agent orchestration, OAuth and webhook connectors,
 
 ## What I build
 
-### claude-apex -- a Claude Code environment, mirrored and public (MIT)
-
-My public flagship and daily driver. A three-layer auto-routing environment for Claude Code: it reads a natural-language prompt and activates the right tools automatically through CARL (just-in-time rules across 10 domains), a capability registry (task -> skills + agents + MCP servers), and a command registry (intent -> slash commands). It is the public mirror of my working environment, which resolves to **1,276 skills, 185 agents, 235 commands, and 6 MCP servers** (verified on disk) -- a curated original core plus the open Claude Code ecosystem, all credited. Hard evidence that I can design agent routing, MCP integration, and developer tooling at scale.
-
-[**-> github.com/YousefNabil-SOC/claude-apex**](https://github.com/YousefNabil-SOC/claude-apex)
-
 ### pixeldhow -- founded and led a team to ship a live agency platform
 
 I founded and architected pixeldhow and led a small team that shipped it as a live production platform. Built on Next.js / React / Prisma + Supabase, with the connector plumbing that actually matters: Cal.com and Telegram webhooks, a booking service with a circuit breaker, JWT/RBAC admin, Supabase row-level security, Resend email automation, and Arabic RTL internationalization. The live site also ships an in-browser AI voice assistant powered by Google Gemini Live. My strongest proof of real OAuth, webhook-lifecycle, and two-way booking-sync work.
 
 [**-> pixeldhow.com**](https://pixeldhow.com)
+
+### claude-apex -- a Claude Code environment, mirrored and public (MIT)
+
+My public, open-source flagship and daily driver. A three-layer auto-routing environment for Claude Code: it reads a natural-language prompt and activates the right tools automatically through CARL (just-in-time rules across 10 domains), a capability registry (task -> skills + agents + MCP servers), and a command registry (intent -> slash commands). It is the public mirror of my working environment, which resolves to **1,276 skills, 185 agents, 235 commands, and 8 MCP servers** (verified on disk) -- a curated original core plus the open Claude Code ecosystem, all credited. Hard evidence that I can design agent routing, MCP integration, and developer tooling at scale.
+
+[**-> github.com/YousefNabil-SOC/claude-apex**](https://github.com/YousefNabil-SOC/claude-apex)
 
 ### GCC Arabic AI systems -- built over real business data (capability only)
 
