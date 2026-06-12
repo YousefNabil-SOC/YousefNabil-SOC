@@ -1,88 +1,60 @@
-# **Hello, I'm Yousef Nabil**
+# Yousef Nabil
 
-<a href="mailto:yousef.nabil.qa@gmail.com" target="_blank"><img src="https://img.shields.io/badge/-Email-111827?&style=for-the-badge&logo=gmail&logoColor=white" /></a>
-<a href="https://github.com/YousefNabil-SOC/YousefNabil-SOC/blob/main/Yousef_Nabil_CV.pdf" target="_blank"><img src="https://img.shields.io/badge/-Resume-333333?&style=for-the-badge&logo=readme&logoColor=white" /></a>
-<a href="https://www.linkedin.com/in/yousef-nabil-79a431287/" target="_blank"><img src="https://img.shields.io/badge/-LinkedIn-0072b1?&style=for-the-badge&logo=linkedin&logoColor=white" /></a>
-<a href="https://github.com/YousefNabil-SOC" target="_blank"><img src="https://img.shields.io/badge/-GitHub-181717?&style=for-the-badge&logo=github&logoColor=white" /></a>
-<a href="https://yousefnabil-soc.github.io/YousefNabil-SOC/" target="_blank"><img src="https://img.shields.io/badge/-Portfolio-22d3ee?&style=for-the-badge&logo=googlechrome&logoColor=white" /></a>
+**AI builder | automation and connector engineer -- Doha, Qatar**
 
-## **About Me**
+I build AI systems that ship: agent orchestration, OAuth and webhook connectors, and automation pipelines -- developed fast with Claude Code and hardened by a security background. Below is what I have actually built, strongest first.
 
-Entry-level SOC analyst based in **Doha, Qatar** — focused on alert triage, incident investigation, SIEM hunting (Splunk / Elastic / Sentinel), and clean incident reporting with IOC extraction.
-
----
-
-## **Currently**
-
-| **Role** | **Organization** |
-|----------|------------------|
-| Virtual SOC Analyst (Training) | Let's Defend |
-| SOC & SIEM Labs (Hands-On) | Hack The Box Academy |
-| B.Sc. Computer Science (IT) — Graduation 2025 | Egyptian E-Learning University (EELU) |
+<a href="mailto:yousef.nabil.qa@gmail.com"><img src="https://img.shields.io/badge/-Email-111827?&style=for-the-badge&logo=gmail&logoColor=white" /></a>
+<a href="https://github.com/YousefNabil-SOC"><img src="https://img.shields.io/badge/-GitHub-181717?&style=for-the-badge&logo=github&logoColor=white" /></a>
+<a href="https://www.linkedin.com/in/yousef-nabil-79a431287/"><img src="https://img.shields.io/badge/-LinkedIn-0072b1?&style=for-the-badge&logo=linkedin&logoColor=white" /></a>
+<a href="https://yousefnabil-soc.github.io/YousefNabil-SOC/"><img src="https://img.shields.io/badge/-Portfolio-22d3ee?&style=for-the-badge&logo=googlechrome&logoColor=white" /></a>
 
 ---
 
-## **Projects**
+## What I build
 
-**🌐 [View Full Portfolio](https://yousefnabil-soc.github.io/YousefNabil-SOC/)**
+### claude-apex -- Claude Code environment and developer tooling (public, MIT)
 
-| **Project** | **Description** |
-|-------------|-----------------|
-| **[SOC Home Lab — Detection & Response Pipeline](https://yousefnabil-soc.github.io/YousefNabil-SOC/soc-home-lab.html)** | 3-VM detection & response pipeline: Sysmon telemetry → Wazuh SIEM → TheHive case management. Dual-NIC architecture, end-to-end validation, and MITRE ATT&CK mapping. |
-| **[Vulnerability Management Program — Inception to Maintenance](https://yousefnabil-soc.github.io/YousefNabil-SOC/vuln-management.html)** | Full lifecycle program: authenticated scanning (Tenable), risk-prioritized remediation with scripted fixes, independent verification by rescan, and maintenance KPIs. |
-| **[Threat Investigation Case Files](https://yousefnabil-soc.github.io/incident-reports/)** | Professional SOC-style incident response reports investigating real-world attack scenarios with full timelines, evidence correlation, IOC extraction, and MITRE ATT&CK mapping. |
-| **Heart Disease Prediction (B.Sc. Graduation Project)** | ML project with preprocessing, Optuna tuning, and SHAP explainability — included as academic capstone. |
+My public flagship. A three-layer auto-routing environment for Claude Code: it reads a natural-language prompt and activates the right tools automatically through CARL (just-in-time rule injection across 10 domains), a capability registry (task pattern -> skills + agents + MCP servers), and a command registry (intent -> slash commands). The repository ships 28 curated skills, 25 specialist agents, 100+ slash commands, and 7 automation hooks, with a non-destructive installer and beginner-to-advanced documentation. It is hard public evidence that I can design agent routing, developer tooling, and docs at scale.
 
----
+-> https://github.com/YousefNabil-SOC/claude-apex
 
-## **📊 Incident Response Case Files**
+### pixeldhow -- founded and led a team to ship a live agency platform
 
-Professional investigation reports demonstrating real-world SOC analysis skills.  
-**[🔗 View All Reports Portfolio](https://yousefnabil-soc.github.io/incident-reports/)**
+I founded and architected pixeldhow and led a small team that shipped it as a live production platform. Built on Next.js / React / Prisma + Supabase, with the connector plumbing that actually matters: Cal.com and Telegram webhooks, a booking service with a circuit breaker, JWT/RBAC admin, Supabase row-level security, Resend email automation, and Arabic RTL internationalization. This is my strongest proof of real OAuth, webhook-lifecycle, and two-way booking-sync work.
 
-| **Investigation** | **Severity** | **Summary** |
-|-------------------|--------------|-------------|
-| **[AZUKI-001 - Targeted Intrusion](https://yousefnabil-soc.github.io/incident-reports/AZUKI-001_IR-Report.html)** | 🔴 CRITICAL | RDP compromise with credential dumping (Mimikatz), lateral movement, data exfiltration, and anti-forensic log clearing. Full attack chain analysis with KQL hunting queries. |
-| **[AZUKI-ADMINPC - Admin PC Compromise](https://yousefnabil-soc.github.io/incident-reports/AZUKI-ADMINPC_IR-Report.html)** | 🔴 CRITICAL | Administrator workstation breach investigation covering privilege escalation, persistence mechanisms, C2 communications, and high-value target analysis. |
-| **[AZUKI-Q4-02 - Q4 2025 Security Incident](https://yousefnabil-soc.github.io/incident-reports/AZUKI-Q4-02_IR-Report.html)** | 🔴 CRITICAL | Sophisticated attack campaign with comprehensive timeline reconstruction, MITRE ATT&CK framework mapping, and detailed threat hunting methodology. |
-| **[BROKER-001 - Financial Services Breach](https://yousefnabil-soc.github.io/incident-reports/BROKER-001_IR-Report.html)** | 🟠 HIGH | Brokerage firm security incident focusing on network intrusion, financial data access patterns, and threat actor infrastructure analysis. |
+### GCC Arabic AI systems -- built over real business data (capability only)
 
-**📁 Repository:** [incident-reports](https://github.com/YousefNabil-SOC/incident-reports) | **🌐 Live Portfolio:** [yousefnabil-soc.github.io/incident-reports](https://yousefnabil-soc.github.io/incident-reports/)
+A set of Arabic-language document-intelligence and automation systems I built with Claude Code over real GCC business data: extracting structured data from engineering drawings and PDFs, generating Arabic DOCX deliverables, running Gmail (OAuth) send/fetch automation, and answering domain Q&A over large internal knowledge bases. The domains span heritage restoration, legal practice, and construction fit-out. Client identities, documents, and figures are confidential and are never published -- only the capability is described here.
+
+### OpenJarvis -- in-progress agent-orchestration system (built with Claude Code)
+
+An ambitious system I architected and am building with Claude Code: a local-LLM router (keyword-first, with an LLM fallback) feeding a Claude Code execution pipeline, an MCP server that exposes tools to AI coding agents, a small Python SDK, OAuth connectors (Google and others), signature-validated webhook routes (Twilio / Discord / Slack), and RAG retrieval. Local voice (STT/TTS) is partial, with no live turn-taking loop yet. Honest status: in progress and evolving -- not a finished or production system.
 
 ---
 
-## **Tools**
+## How I work
 
-<div>
-    <img src="https://img.shields.io/badge/-Microsoft%20Sentinel-0078D4?&style=for-the-badge&logo=Microsoft&logoColor=white" />
-    <img src="https://img.shields.io/badge/-Microsoft%20Defender-00A4EF?&style=for-the-badge&logo=Microsoft&logoColor=white" />
-    <img src="https://img.shields.io/badge/-Splunk-000000?&style=for-the-badge&logo=Splunk&logoColor=white" />
-    <img src="https://img.shields.io/badge/-Elastic-005571?&style=for-the-badge&logo=Elastic&logoColor=white" />
-    <img src="https://img.shields.io/badge/-KQL-0078D4?&style=for-the-badge&logoColor=white" />
-    <img src="https://img.shields.io/badge/-Sysmon-0078D4?&style=for-the-badge&logoColor=white" />
-    <img src="https://img.shields.io/badge/-Wireshark-1679A7?&style=for-the-badge&logo=Wireshark&logoColor=white" />
-    <img src="https://img.shields.io/badge/-Tenable-0095D5?&style=for-the-badge&logo=Tenable&logoColor=white" />
-    <img src="https://img.shields.io/badge/-Qualys-ED1846?&style=for-the-badge&logo=Qualys&logoColor=white" />
-    <img src="https://img.shields.io/badge/-Python-3776AB?&style=for-the-badge&logo=Python&logoColor=white" />
-</div>
+- AI-first: I build with Claude Code and keep a clear prompt-and-refactor log.
+- Connector-minded: OAuth 2.0, webhook lifecycles, two-way sync, Postgres / Supabase.
+- Shipping bias: live platforms and public tooling over slideware.
 
 ---
 
-## **Training**
+## Security backbone (my edge)
 
-| **Course / Platform** | **Focus** |
-|-----------------------|----------|
-| Hack The Box Academy — SOC & SIEM Labs | SIEM investigations, detection workflow, blue-team lab exercises |
-| Let's Defend — Virtual SOC | Alert triage, investigation notes, escalation rationale, incident handling |
-| TryHackMe — SAL1 | SOC simulation: phishing, traffic analysis, Windows/Linux monitoring, triage |
-| KC7 Cyber Labs | KQL-based investigations (lateral movement, phishing, memory-focused cases) |
-| Google Cybersecurity Professional Certificate | SOC fundamentals (Linux, SQL, monitoring, IR basics) |
-| (ISC)² Certified in Cybersecurity (CC) | Security principles, IAM, network security, incident response fundamentals |
-| CompTIA CySA+ | In progress — blue-team analytics and detection engineering |
+I come from detection and response, and it shows in the integrations I build: least-privilege OAuth scopes, secrets kept out of source control, webhook signature validation, and reproducible, well-documented changes. The security discipline is what makes my connector and automation work trustworthy.
+
+- Background: SOC alert triage and SIEM hunting (Sentinel / Splunk / Elastic / KQL), vulnerability management, and Windows hardening (STIG remediation scripts in this repo under `STIGs/`).
+- Incident-response case files (lab / synthetic data): https://yousefnabil-soc.github.io/incident-reports/
+- Credentials: (ISC)2 Certified in Cybersecurity (CC); CompTIA CySA+ (in progress); Google Cybersecurity Certificate.
 
 ---
 
-<p align="center">
-  <b>DETECT. INVESTIGATE. IMPROVE.</b><br>
-  <i>Building real SOC skill through hands-on labs and professional reporting.</i>
-</p>
+## Background
+
+B.Sc. Computer Science (Information Technology), Egyptian E-Learning University, 2025. Based in Doha, Qatar.
+
+---
+
+<p align="center"><b>BUILD. CONNECT. SECURE.</b></p>
