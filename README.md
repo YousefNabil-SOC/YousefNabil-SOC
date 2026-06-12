@@ -1,13 +1,17 @@
+<div align="center">
+
 # Yousef Nabil
 
 **AI builder | automation and connector engineer -- Doha, Qatar**
 
-I build AI systems that ship: agent orchestration, OAuth and webhook connectors, and automation pipelines -- developed fast with Claude Code and hardened by a security background. Below is what I have actually built, strongest first.
-
 <a href="mailto:yousef.nabil.qa@gmail.com"><img src="https://img.shields.io/badge/-Email-111827?&style=for-the-badge&logo=gmail&logoColor=white" /></a>
 <a href="https://github.com/YousefNabil-SOC"><img src="https://img.shields.io/badge/-GitHub-181717?&style=for-the-badge&logo=github&logoColor=white" /></a>
 <a href="https://www.linkedin.com/in/yousef-nabil-79a431287/"><img src="https://img.shields.io/badge/-LinkedIn-0072b1?&style=for-the-badge&logo=linkedin&logoColor=white" /></a>
-<a href="https://yousefnabil-soc.github.io/YousefNabil-SOC/"><img src="https://img.shields.io/badge/-Portfolio-22d3ee?&style=for-the-badge&logo=googlechrome&logoColor=white" /></a>
+<a href="https://seashoregroup.vercel.app/credits"><img src="https://img.shields.io/badge/-Portfolio-22d3ee?&style=for-the-badge&logo=googlechrome&logoColor=white" /></a>
+
+</div>
+
+I build AI systems that ship: agent orchestration, OAuth and webhook connectors, and automation pipelines -- developed fast with Claude Code and hardened by a security background. Below is what I have actually built, strongest first.
 
 ---
 
@@ -21,7 +25,9 @@ My public flagship. A three-layer auto-routing environment for Claude Code: it r
 
 ### pixeldhow -- founded and led a team to ship a live agency platform
 
-I founded and architected pixeldhow and led a small team that shipped it as a live production platform. Built on Next.js / React / Prisma + Supabase, with the connector plumbing that actually matters: Cal.com and Telegram webhooks, a booking service with a circuit breaker, JWT/RBAC admin, Supabase row-level security, Resend email automation, and Arabic RTL internationalization. This is my strongest proof of real OAuth, webhook-lifecycle, and two-way booking-sync work.
+I founded and architected pixeldhow and led a small team that shipped it as a live production platform. Built on Next.js / React / Prisma + Supabase, with the connector plumbing that actually matters: Cal.com and Telegram webhooks, a booking service with a circuit breaker, JWT/RBAC admin, Supabase row-level security, Resend email automation, and Arabic RTL internationalization. The live site also ships an in-browser AI voice assistant powered by Google Gemini Live. This is my strongest proof of real OAuth, webhook-lifecycle, and two-way booking-sync work.
+
+-> https://pixeldhow.com
 
 ### GCC Arabic AI systems -- built over real business data (capability only)
 
