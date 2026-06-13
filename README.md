@@ -30,6 +30,12 @@ I build AI systems that ship: agent orchestration, OAuth and webhook connectors,
 
 ## What I build
 
+### doo-contact-sync -- a live HubSpot two-way contact connector + MCP server
+
+A production Track C connector, shipped before the DOO Builders League challenge even started: real OAuth 2.0 with automatic token refresh, signature-verified HubSpot v3 webhooks, and idempotent two-way contact sync backed by a Postgres ledger (loop guard + last-write-wins), with 429 retry/backoff, a health endpoint, and an MCP server that exposes the same actions as agent tools -- deployed on Vercel and publicly running. The HubSpot half runs live against a real portal; the "DOO side" is a clean local stand-in behind a single adapter, so swapping in a real API is one interface.
+
+[**-> Live app**](https://doo-contact-sync.vercel.app) - [**-> Code**](https://github.com/YousefNabil-SOC/doo-contact-sync)
+
 ### pixeldhow -- founded and led a team to ship a live agency platform
 
 I founded and architected pixeldhow and led a small team that shipped it as a live production platform. Built on Next.js / React / Prisma + Supabase, with the connector plumbing that actually matters: Cal.com and Telegram webhooks, a booking service with a circuit breaker, JWT/RBAC admin, Supabase row-level security, Resend email automation, and Arabic RTL internationalization. The live site also ships **Suhail** -- a production in-browser AI voice agent I built end to end that talks to visitors in their own language and dialect and takes real action on the page (full breakdown below). The build spans real OAuth, full webhook lifecycles, and two-way booking sync.
@@ -40,21 +46,8 @@ I founded and architected pixeldhow and led a small team that shipped it as a li
 
 Live on pixeldhow.com is **Suhail (سهيل)** -- a real-time, in-browser voice agent I designed and built end to end. Not a chat widget and not a script: a visitor presses one button and *talks to him out loud*, and he answers in their own language, takes over the page, and completes real tasks while they watch.
 
-**What Suhail does**
-
-- **Speaks your language -- and your exact dialect.** He auto-detects the visitor's language from the first sentence and mirrors it natively across dozens of languages and accents -- English (US / UK / Australian / Indian and more), Spanish, French, Hindi, and others. In Arabic he goes far past a generic "Arabic": he distinguishes and speaks **Qatari, Saudi (Najdi & Hijazi), Kuwaiti, Emirati, Bahraini, Omani, Egyptian, Levantine, Iraqi, Sudanese, and Maghrebi** -- the right vocabulary, idioms, and Gulf pronunciation for each.
-- **Takes real action -- hands-free.** Through a tool-calling layer he physically navigates the site, opens any project, fills the contact form in front of you, fetches live available meeting times, picks a slot, and submits the booking. A complete booking, done by voice.
-- **Sells like a consultant.** An engineered persona with discovery, objection handling, and a calm closing style -- on-brand and human, never a generic bot.
-- **Stays safe.** Hard scope and identity guardrails, layered prompt-injection defense, and short-lived single-use credentials minted server-side so no secret ever reaches the browser.
-
-**How it's built** *(vendor-neutral by design -- portable across voice backends)*
-
-- A **low-latency bidirectional voice pipeline**: live mic capture streamed up, speech streamed back, with barge-in and noise-aware turn-taking so it feels like a real conversation.
-- A **dialect engine**: a modular prompt architecture (identity / language / behavior layers) plus a hand-engineered Gulf dialect-and-prosody system that renders the *sound* of each dialect, not just the words.
-- A **tool / function-calling bridge** wiring the agent to real page actions and the live Cal.com booking + Resend email stack.
-- **Security-first delivery:** ephemeral scoped tokens, server-side secrets, and validated tool responses on every call.
-
-Suhail runs in production today -- multilingual, action-taking, and secure.
+- **Speaks your exact dialect.** He auto-detects the visitor's language from the first sentence and mirrors it natively -- including Gulf Arabic (Qatari, Najdi & Hijazi, Kuwaiti, Emirati, Bahraini, Omani), plus Egyptian, Levantine, Iraqi, and Maghrebi, and English, Spanish, French, Hindi and more.
+- **Takes real action, hands-free.** Through a tool-calling layer he navigates the site, fills the contact form, and books a real meeting by voice -- on a low-latency two-way voice pipeline, behind hard guardrails and short-lived server-side credentials so no secret reaches the browser. Vendor-neutral, portable across voice backends.
 
 [**-> Talk to Suhail on pixeldhow.com**](https://pixeldhow.com)
 
