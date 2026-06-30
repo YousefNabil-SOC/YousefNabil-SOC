@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0b1220,50:0e7490,100:22d3ee&height=200&section=header&text=Yousef%20Nabil&fontSize=58&fontColor=ffffff&fontAlignY=38&desc=Full-stack%20Engineer%20%7C%20AI%20%26%20Voice%20Systems%20%7C%20Secure%20Integrations&descSize=18&descAlignY=60" alt="Yousef Nabil" />
+# Yousef Nabil
 
-<img src="https://readme-typing-svg.demolab.com/?font=JetBrains+Mono&weight=600&size=22&duration=2600&pause=900&color=22D3EE&center=true&vCenter=true&width=760&height=55&lines=Full-stack+Engineer+(Next.js+%2F+React+%2F+TypeScript);AI+%26+realtime+voice+agents+that+take+action;OAuth+-+Webhooks+-+MCP+servers+-+SDKs;I+build+-+and+lead+the+team+that+ships;Secure+by+default%2C+built+with+Claude+Code" alt="roles" />
+<img src="https://readme-typing-svg.demolab.com/?font=JetBrains+Mono&weight=600&size=22&duration=2600&pause=900&color=22D3EE&center=true&vCenter=true&width=760&height=55&lines=AI+product+builder;Voice+agents+that+take+real+action;Secure+integrations+-+OAuth%2C+Webhooks%2C+MCP;I+build+-+and+lead+the+team+that+ships;Production+AI+products+%26+web+platforms" alt="roles" />
 
-<br>
+**AI product builder | voice & agent systems | secure integrations -- Doha, Qatar**
 
 <a href="mailto:yousef.nabil.qa@gmail.com"><img src="https://img.shields.io/badge/-Email-111827?style=for-the-badge&logo=gmail&logoColor=white" /></a>
 <a href="https://github.com/YousefNabil-SOC"><img src="https://img.shields.io/badge/-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" /></a>
@@ -32,10 +32,10 @@
 
 </div>
 
-I am a full-stack engineer in Doha who ships production web and AI products end to
-end -- from the database and the connector plumbing to the interface and the
-realtime voice layer on top. I build fast with Claude Code, harden everything with
-a security background, and I lead the small senior team that ships alongside me.
+I design and ship production AI products end to end -- voice agents that take real
+action, secure connectors and MCP tooling, and the web platforms around them. I
+build my products from the data layer up to the interface, I lead the small senior
+team that ships with me, and I harden everything with a security background.
 
 ---
 
@@ -57,7 +57,7 @@ a security background, and I lead the small senior team that ships alongside me.
   ledgers -- the plumbing that keeps automated systems honest.
 - **Agent tooling and oversight.** MCP servers that expose real actions as agent
   tools, structured audit logging, and prompt/agent routing across many tools.
-- **Production web engineering.** Polished Next.js / React / TypeScript apps with
+- **Real product engineering.** Polished Next.js / React / TypeScript apps with
   motion (GSAP, Three.js), Prisma + Postgres/Supabase with row-level security, and
   Arabic RTL internationalization.
 
@@ -128,12 +128,12 @@ yet production).
 
 ---
 
-## Engineering range
-Production Next.js / React / TypeScript apps; motion and 3D (GSAP, Three.js); Prisma
-with Postgres / Supabase and row-level security; OAuth 2.0, webhook lifecycles, and
-circuit breakers; realtime two-way voice pipelines; MCP tool servers; Arabic RTL
-internationalization; CI and Vercel deploys. Primary languages: TypeScript,
-JavaScript, Python, SQL.
+## What my shipped work spans
+Next.js / React / TypeScript product front-ends with motion and 3D (GSAP, Three.js);
+Prisma with Postgres / Supabase and row-level security; OAuth 2.0, webhook
+lifecycles, and circuit breakers; realtime two-way voice pipelines; MCP tool servers;
+Arabic RTL internationalization; CI and Vercel deploys. Working languages:
+TypeScript, JavaScript, Python, SQL.
 
 ## Security backbone -- my edge
 I come from detection and response, and it shows in what I build: least-privilege
@@ -151,6 +151,6 @@ I founded and lead Pixeldhow, a small senior product team in Doha. Based in Doha
 
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:22d3ee,50:0e7490,100:0b1220&height=120&section=footer&text=BUILD.%20CONNECT.%20SECURE.&fontSize=22&fontColor=ffffff&fontAlignY=70" alt="footer" />
+**BUILD. CONNECT. SECURE.**
 
 </div>
