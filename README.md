@@ -26,7 +26,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=flat-square&logo=supabase&logoColor=white)
 ![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white)
 ![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat-square&logo=threedotjs&logoColor=white)
-![Gemini Live](https://img.shields.io/badge/Gemini%20Live-8E75B2?style=flat-square&logo=googlegemini&logoColor=white)
+![Realtime Voice AI](https://img.shields.io/badge/Realtime%20Voice%20AI-8E75B2?style=flat-square)
 ![MCP](https://img.shields.io/badge/MCP-000000?style=flat-square&logo=modelcontextprotocol&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 
@@ -66,8 +66,8 @@ team that ships with me, and I harden everything with a security background.
 ## Selected work -- shipped and live
 
 ### Pixeldhow -- a product studio I founded and lead
-I founded Pixeldhow and lead a small senior team in Doha; I architect the systems
-and lead the people who ship them with me. Our flagship platform (pixeldhow.com) is
+I founded Pixeldhow and lead a small senior team in Doha, and I architect and build
+the systems behind the work. The flagship platform (pixeldhow.com) is
 a TypeScript-first Next.js / React / Prisma + Supabase build with the plumbing that
 actually matters: Cal.com and Telegram webhooks, a booking service with a circuit
 breaker, JWT/RBAC admin, Supabase row-level security, Resend email automation, and
@@ -90,15 +90,15 @@ tasks while they watch.
 - Live: https://pixeldhow.com
 
 ### Ayni -- AI host for ANANA CAFE, Doha
-A production voice host for a real Doha cafe, built by my team. Ayni speaks fluent
+A production voice host for a real Doha cafe. Ayni speaks fluent
 Qatari / Khaleeji Arabic and mirrors whatever language the guest uses, recommends
 from the real menu, and *drives the website by voice* -- opening product pages,
 switching the site language, navigating sections, showing the cart -- narrating each
 move. Engineered for trust: answers are grounded only in the real menu (no invented
-items or prices); the model API key never reaches the browser (single-use ephemeral
-tokens); prompt-injection is refused; requests are rate-limited and same-origin
+items or prices); credentials never reach the browser (short-lived, single-use, and
+server-side); prompt-injection is refused; requests are rate-limited and same-origin
 guarded; every action tool is reversible by design.
-- Stack: Next.js 16, React 19, TypeScript, Tailwind v4, GSAP, Three.js, Google Gemini Live.
+- Stack: Next.js 16, React 19, TypeScript, Tailwind v4, GSAP, Three.js; a realtime voice + tool-calling layer I built on top.
 - Live: https://anana-website.vercel.app
 
 ### doo-contact-sync -- production two-way connector + MCP server
