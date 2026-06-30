@@ -151,6 +151,6 @@ I founded and lead Pixeldhow, a small senior product team in Doha. Based in Doha
 
 <div align="center">
 
-**BUILD. CONNECT. SECURE.**
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:22d3ee,50:0e7490,100:0b1220&height=150&section=footer&text=BUILD.%20CONNECT.%20SECURE.&fontSize=26&fontColor=ffffff&fontAlignY=72" alt="BUILD. CONNECT. SECURE." />
 
 </div>
